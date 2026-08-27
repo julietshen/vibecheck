@@ -9,9 +9,26 @@ torchvision (Pixtral image processor). Runs sequentially.
 """
 from __future__ import annotations
 import math
+from pathlib import Path
 
 NAME = "Shieldstral-1.0-3B-mm"
 SUPPORTS_CONCURRENCY = False
+
+# Test-set CSVs store image paths relative to the eval/ directory (e.g.
+# "scam_eval/scam_images/scamimg001.jpg") so they are portable across machines.
+# EVAL_DIR is eval/ (this file lives at eval/models/shieldstral_mm.py).
+EVAL_DIR = Path(__file__).resolve().parents[1]
+
+
+def _resolve_image_path(path: str, base: Path) -> str:
+    """Return an existing path for `path`. Absolute paths are used as-is; a
+    relative path is tried against the process cwd first, then `base` (the eval/
+    dir, or an --model-arg image_base override), so evals run from anywhere."""
+    p = Path(path)
+    if p.is_absolute() or p.exists():
+        return str(p)
+    candidate = base / path
+    return str(candidate if candidate.exists() else p)
 
 MODEL_ID = "mistralai/Shieldstral-1.0-3B"
 SYSTEM = ("Judge whether the Document meets the requirements based on the Query "
@@ -41,6 +58,7 @@ def make_classifier(opts: dict):
     model_id = opts.get("model", MODEL_ID)
     query = opts.get("query", QUERY)
     threshold = float(opts.get("threshold", 0.5))
+    image_base = Path(opts["image_base"]) if opts.get("image_base") else EVAL_DIR
     if "device" in opts:
         device = opts["device"]
     elif torch.backends.mps.is_available():
@@ -69,6 +87,7 @@ def make_classifier(opts: dict):
                 caption = (obj.get("text") or "").strip()
             except Exception:
                 pass
+        path = _resolve_image_path(path, image_base)
         try:
             img = Image.open(path).convert("RGB")
         except Exception as e:

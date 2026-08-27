@@ -9,6 +9,16 @@ This guide has two halves:
 - **Part 1 — Serving**: getting an open-weight model deployed on a rented GPU and reachable from the laptop. **Skip this for local models** (e.g. Shieldstral), which run in-process with no server.
 - **Part 2 — Evaluating**: feeding test content through a model under different "policy" prompts and measuring how well it labels things. This is where the harness lives — start here if your model is already reachable (or runs locally).
 
+### What to have ready before a demo
+
+Prepare these ahead of time so the demo isn't spent on installs and downloads:
+
+- **A Python 3.11+ virtualenv** with dependencies installed: `pip install -r requirements.txt`. That covers both paths — `requests` for served models, and `torch` / `transformers>=5` / `pillow` / `torchvision` for the local (Shieldstral) and multimodal runs. Apple-silicon Macs run Shieldstral on the MPS GPU; any CUDA box works too. (`modal`, for serving, is installed separately as a CLI tool — see Part 1.)
+- **A Hugging Face account + token, with the model's terms accepted.** `mistralai/Shieldstral-1.0-3B` is **gated** — click "Agree and access repository" on its HF page while logged in, then `huggingface-cli login` with a read token *before* the first run, or the weight download 401s. This applies to the local models too, not just the served ones.
+- **Weights pre-downloaded.** The first `python eval.py --model shieldstral …` pulls ~6 GB from HF (multimodal pulls a bit more). Run one throwaway `--limit 2` sweep beforehand so the download is already cached when your audience is watching.
+- **For image evals: the image files present on disk.** The image test sets reference files under `eval/scam_eval/scam_images/` and `eval/sex_eval/sex_images/`. Those directories are not part of a fresh clone — make sure they're populated on the demo machine (see [Multimodal (image) evals](#multimodal-image-evals)).
+- **For served models only:** a Modal account (`modal token new` done), the Modal secret created, and ideally the endpoint already deployed and warmed (the first request pays a 2–3 min cold start). See Part 1.
+
 ---
 
 ## Part 1: Serving
@@ -253,7 +263,7 @@ Different policy-conditioned classifiers expect different prompt shapes and prod
 
 - **Cope** uses a text template (`INSTRUCTIONS / POLICY / CONTENT / ANSWER` blocks, model emits a single `0` or `1` after the ANSWER header). cope-b is chat-template-aware (`/v1/chat/completions`); cope-a is a Gemma-2 base with no chat template (`/v1/completions`). `max_tokens=1`, `temperature=0`.
 - **gpt-oss-safeguard** reasons (chain-of-thought) then emits a final `0` or `1`; needs a large `max_tokens` (~2048) so it has room to finish reasoning before answering, and the answer is the last `0`/`1` in the response.
-- **Shieldstral** doesn't generate text at all — it scores in one forward pass, and we read the yes/no token logits directly and renormalize to a 0–1 score.
+- **Shieldstral** doesn't generate text at all — it scores in one forward pass, and we read the yes/no token logits directly and renormalize to a 0–1 score. It has a **multimodal variant** (`models/shieldstral_mm.py`) that judges an *image* the same way — same logit-scoring, but the Document is a picture (optionally paired with the post's caption). See [Multimodal (image) evals](#multimodal-image-evals).
 - **Llama-Guard** uses a fixed taxonomy embedded in the prompt and emits `safe` / `unsafe` plus a category code.
 
 The harness isolates exactly these differences into a small **adapter** per model, so the eval loop, metrics, and output format never change. The three things an adapter encapsulates:
@@ -274,24 +284,35 @@ eval/
 │   ├── cope_b.py                 # zentropi-ai/cope-b-a4b   (HTTP, chat)
 │   ├── cope_a.py                 # zentropi-ai/cope-a-9b    (HTTP, raw completions)
 │   ├── safeguard.py              # openai/gpt-oss-safeguard-20b (HTTP, CoT)
-│   └── shieldstral.py            # mistralai/Shieldstral-1.0-3B (local inference)
+│   ├── shieldstral.py            # mistralai/Shieldstral-1.0-3B (local, text)
+│   └── shieldstral_mm.py         # mistralai/Shieldstral-1.0-3B (local, image / multimodal)
 ├── compare_predictions.py        # A/B a run vs another (format-sensitivity check)
+├── steerability.py               # readout: flip rate under an INVERTED policy (see Robustness probes)
+├── offtopic.py                   # readout: flag rate under an OFF-TOPIC (null) policy
+├── carveout.py                   # readout: selective release under a CARVE-OUT policy
+├── rescore.py                    # re-score existing predictions against an alternate label set
 ├── probes/
 │   └── selfharm.csv              # calibration probes run before a sweep with --probes
 ├── test_set.csv                  # default: 100-row self-harm test set
 ├── policies/                     # one .md file per policy variant
-│   ├── minimal.md                # one-sentence (self-harm)
-│   ├── simple.md                 # short paragraph
-│   ├── medium.md                 # structured (terms + includes/excludes)
-│   ├── full.md                   # detailed hand-written version
-│   ├── very_long.md              # ~1,000-line maximal policy
+│   ├── minimal / simple / medium / full / very_long .md   # self-harm, increasing detail
 │   ├── zentropi_official.md      # official Zentropi self-harm policy (from their API)
-│   └── sexual_content_*.md       # same spread, sexual-content domain
-├── sex_eval/                     # data prep workspace for the sexual-content eval
-│   ├── sample_bsky_for_sex_eval.py   # stratified sampler over Bluesky post dataset
+│   ├── selfharm_inverted.md      # INVERTED mirror — steerability probe
+│   ├── sexual_content_*.md       # sexual-content domain (same spread + kink carve-outs, inverted)
+│   ├── scam_*.md                 # scam & spam domain
+│   └── violent_extremism_offtopic.md   # OFF-TOPIC null policy — off-topic probe
+├── sex_eval/                     # data-prep workspace for the sexual-content eval
 │   ├── build_redteam.py              # generates synthetic red-team set
-│   ├── merge_test_set.py             # combines the two into the final test set
-│   └── test_set.csv                  # produced by merge_test_set.py
+│   ├── merge_test_set.py             # combines labelled + red-team into the final test set
+│   ├── test_set.csv                  # text test set (produced by merge_test_set.py)
+│   └── test_set_sex_images.csv       # image test set (content = relative image path)
+├── scam_eval/                    # data-prep workspace for the scam/spam eval
+│   ├── build_image_set.py            # downloads + assembles the image test set
+│   ├── test_set_scam.csv             # scam text set
+│   ├── test_set_spam.csv             # spam-inclusive re-labeling of the same content
+│   ├── test_set_nonenglish.csv       # multilingual text set
+│   ├── test_set_images.csv           # image set (content = relative image path)
+│   └── test_set_images_caption.csv   # image + caption set (content = JSON {image, text})
 ├── eval_cope.py, eval_shieldstral.py # original single-model scripts (superseded)
 └── results/                          # CSVs of predictions and per-policy metrics
 ```
@@ -381,7 +402,9 @@ The self-harm eval used a pre-labelled CSV from a partner. For sexual content (a
 
 #### Part A — Stratified sample from a public dataset for manual labelling
 
-`sex_eval/sample_bsky_for_sex_eval.py` is a worked example of this pattern. It downloads one shard of a public Bluesky post dataset (~130 MB, ~390k posts) and filters it into three "tiers":
+> **Note:** the original `sex_eval/sample_bsky_for_sex_eval.py` sampler is no longer checked in — its labelled output (`sex_eval/candidates_to_label.csv`) and the merged `test_set.csv` remain. The pattern below is still the methodology we follow; `scam_eval/build_image_set.py` is the closest live worked example (it assembles the image test set with the same tiering + hard-drop approach). Treat the commands here as the recipe to re-implement, not a script to run as-is.
+
+The sampler pattern downloads one shard of a public Bluesky post dataset (~130 MB, ~390k posts) and filters it into three "tiers":
 
 - **Tier A** — strong-signal keywords (likely-violating) — drives recall measurement
 - **Tier B** — borderline / suggestive keywords — judgment-call zone
@@ -394,15 +417,9 @@ The sampler hard-drops:
 - mostly-URL or mostly-non-Latin posts
 - **anything where a sexual term co-occurs with a minor-related term** (CSAM-adjacent; dropped entirely rather than risked)
 
-By default it pulls 35 / 30 / 15 = **80 posts** to `candidates_to_label.csv` with an empty `ground_truth` column. Open the CSV in Numbers/Excel and fill it in: `1` = violating, `0` = not, blank to skip.
+It pulls roughly 35 / 30 / 15 = **80 posts** to a `candidates_to_label.csv` with an empty `ground_truth` column. Open the CSV in Numbers/Excel and fill it in: `1` = violating, `0` = not, blank to skip.
 
-```bash
-cd eval/sex_eval
-python sample_bsky_for_sex_eval.py
-open candidates_to_label.csv     # macOS: opens in Numbers
-```
-
-🔧 **Adapt for a different domain**: swap the keyword regex lists in the sampler. The hard-drop rules around image posts, length, and minor-related terms should stay.
+🔧 **Adapt for a different domain**: swap the keyword regex lists. The hard-drop rules around image posts, length, and minor-related terms should stay.
 
 #### Part B — Synthetic red-team set
 
@@ -445,6 +462,55 @@ The general-purpose takeaway from those runs, that future evals should bake in:
 
 **Measuring "accuracy" only makes sense after you've checked that the test set's labelling framework matches the policy's framework.** Both cope evaluations turned up substantial disagreements between Zentropi's published policies and the labelled test sets — not because the model was wrong, but because the policies and the labels were optimising for different things. When the two disagree, the numbers report the *disagreement*, not the model. Always look at the false positives and false negatives by hand before drawing model-quality conclusions from F1.
 
+### Multimodal (image) evals
+
+The same harness scores **images** — no core changes. The trick: the test-set schema is unchanged (`id, content, ground_truth`), but for an image set the `content` column holds an **image file path** instead of text, and the multimodal adapter (`models/shieldstral_mm.py`) opens that path and judges the picture. Everything else — policies, checkpointing, metrics, output format — is identical.
+
+```bash
+cd eval
+python eval.py --model shieldstral_mm --test-set scam_eval/test_set_images.csv --label images \
+  --policies scam_minimal scam_simple scam_full scam_spam_inclusive
+python eval.py --model shieldstral_mm --test-set sex_eval/test_set_sex_images.csv --label seximg \
+  --policies sexual_content_minimal sexual_content_simple sexual_content_medium sexual_content_very_long
+```
+
+Two content shapes the multimodal adapter accepts in the `content` column:
+
+- **A plain image path** — judge the image alone (`scam_eval/test_set_images.csv`).
+- **A JSON object `{"image": <path>, "text": <caption>}`** — judge the image *together with* the post's caption text (`scam_eval/test_set_images_caption.csv`). This is how you test whether a caption changes the model's read of the picture.
+
+**Image paths are stored relative to the `eval/` directory** (e.g. `scam_eval/scam_images/scamimg001.jpg`) so the test sets are portable across machines. The adapter resolves a relative path against `eval/` regardless of where you launch from, or against `--model-arg image_base=/some/dir` if your images live elsewhere. **The image files themselves are not in a fresh clone** — the `scam_images/` and `sex_images/` directories must be populated on the demo machine first (`scam_eval/build_image_set.py` is the worked example of downloading and assembling one).
+
+### Scam, spam, and multilingual domains
+
+Beyond self-harm and sexual content, the repo carries a **scam/spam** domain (`scam_eval/`, `policies/scam_*.md`) and **multilingual** text sets (`*_nonenglish_*.csv`). They run through the identical command — only `--test-set` and `--policies` change:
+
+```bash
+python eval.py --model shieldstral --test-set scam_eval/test_set_scam.csv --label scam \
+  --policies scam_minimal scam_simple scam_full
+python eval.py --model shieldstral --test-set scam_eval/test_set_nonenglish.csv --label scam_ml \
+  --policies scam_simple scam_full
+```
+
+`scam` vs `spam` is the same content under two labelings (scam-only, or scam+spam). Rather than re-run inference, run once and re-score against the alternate labels with `rescore.py` (below).
+
+### Robustness probes — reading beyond F1
+
+A set of small **readout scripts** turn a normal sweep into a robustness probe. Each pairs a normal policy with a *twisted* one in the **same** eval.py sweep, then reads the predictions file with a purpose-built metric — because for these the `summary_*.csv` F1 is **meaningless** (the ground_truth no longer matches what the twisted policy asks). Always read these with the dedicated script, not the summary CSV.
+
+- **`steerability.py`** — pair a policy with its **inverted** mirror (`selfharm_inverted.md`, `sexual_content_inverted.md`). On truly-violating rows, measures the *flip rate* 1→0 when the policy is inverted. Flip≈0 means the model held its safety prior (ignored the policy); flip≈1 means it followed the policy. This is the steerability number to report — **not** the summary F1.
+
+  ```bash
+  python eval.py --model shieldstral --label steer \
+    --policies simple selfharm_inverted --test-set test_set.csv
+  python steerability.py 'results/predictions_shieldstral_*_steer_*.csv' \
+    --baseline simple --inverted selfharm_inverted
+  ```
+
+- **`offtopic.py`** — pair with an **off-topic** policy about a harm the set doesn't contain (`violent_extremism_offtopic.md`). Correct answer is 0 on every row, so every flag is a false flag; a policy-literal model flags ~0%. Reads flag rate.
+- **`carveout.py`** — pair a broad policy with a **carve-out** variant that reclassifies one subcategory (e.g. kink) from violating to permitted. Measures whether the model releases *only* the carved-out subcategory while still flagging the rest. Needs a per-row `carveout` label in the test set (passed via `--labels`).
+- **`rescore.py`** — not a probe: re-scores an existing predictions CSV against a different label set (joined on `id`), so one inference pass covers multiple scopes (e.g. scam-only vs scam+spam).
+
 ### Reproducing or extending
 
 To add a new policy variant: drop a markdown file into `eval/policies/` (any structure — the harness reads it as a single text blob), then pass its name (without `.md`) to `--policies`.
@@ -486,6 +552,7 @@ The four shipped adapters cover the three transport shapes you'll encounter:
 
 - `models/cope_b.py`, `models/cope_a.py`, `models/safeguard.py` — HTTP against an OpenAI-compatible vLLM endpoint, via the shared `models/_openai_http.py` helper (handles chat-vs-completions detection and 0/1 parsing). These differ only in a prompt template and a few defaults.
 - `models/shieldstral.py` — **local inference**, no server at all: loads the model with PyTorch/transformers and reads the yes/no logits in-process. This is the template for any laptop-runnable model.
+- `models/shieldstral_mm.py` — the **multimodal** sibling: same local logit-scoring, but the content is an image path (or `{image, text}` JSON) and it judges the picture. The template for any image-capable local model.
 
 Run any of them the same way:
 
@@ -526,14 +593,19 @@ Because every adapter returns the same `(pred, raw)` and the harness owns the ou
 | File | Purpose |
 |---|---|
 | `eval/eval.py` | **The harness** — pick a model with `--model`, writes predictions + summary |
-| `eval/models/*.py` | Per-model adapters (the only per-model code); `_openai_http.py` is a shared helper |
+| `eval/models/*.py` | Per-model adapters (the only per-model code); `_openai_http.py` is a shared helper; `shieldstral_mm.py` is the image adapter |
 | `eval/compare_predictions.py` | A/B two runs on one policy — the format-sensitivity check |
+| `eval/steerability.py` | Flip rate under an inverted policy (read this, not summary F1) |
+| `eval/offtopic.py` | Flag rate under an off-topic (null) policy |
+| `eval/carveout.py` | Selective-release rate under a carve-out policy |
+| `eval/rescore.py` | Re-score existing predictions against an alternate label set |
 | `eval/probes/selfharm.csv` | Calibration probes, passed via `--probes` |
 | `serve_cope.py` | Modal deployment recipe for served models — Part 1 |
 | `eval/test_set.csv` | Default test set (self-harm, 100 rows; column identifiers sanitized) |
 | `eval/policies/*.md` | Policy variants — one per file, name passed to `--policies` |
 | `eval/results/` | Output CSVs (predictions + summary) timestamped per run |
-| `eval/sex_eval/sample_bsky_for_sex_eval.py` | Stratified Bluesky sampler |
+| `eval/sex_eval/`, `eval/scam_eval/` | Data-prep workspaces (samplers, red-team, image sets) per domain |
 | `eval/sex_eval/build_redteam.py` | Generates 50 synthetic red-team cases |
 | `eval/sex_eval/merge_test_set.py` | Combines labelled + red-team into final test set |
+| `eval/*/test_set_images*.csv` | Image test sets — `content` column is a relative image path |
 | `eval/eval_cope.py`, `eval/eval_shieldstral.py` | Original single-model scripts, superseded by `eval.py` |

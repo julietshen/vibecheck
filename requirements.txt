@@ -1,0 +1,18 @@
+# vibecheck eval harness dependencies.
+# Install into a Python 3.11+ virtualenv:  pip install -r requirements.txt
+
+# --- Served models (cope_b, cope_a, safeguard): HTTP adapters only need this ---
+requests>=2.31
+
+# --- Local models (shieldstral): in-process inference ---
+torch>=2.2
+transformers>=5.0        # Shieldstral requires the v5 model classes
+pillow>=10.0             # image loading for the multimodal adapter
+torchvision>=0.17        # Pixtral image processor used by shieldstral_mm
+
+# --- Serving only (Part 1 of GUIDE.md) ---
+# `modal` drives the GPU deployment recipe (serve_cope.py). It is normally
+# installed as a standalone CLI tool rather than into this venv:
+#     uv tool install modal
+# Uncomment if you prefer it here instead:
+# modal>=0.64
