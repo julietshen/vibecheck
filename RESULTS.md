@@ -295,9 +295,9 @@ Built from two sources:
 1. **Stratified Bluesky sample (79 rows)**: One shard of the Hugging Face `withalim/bluesky-posts` dataset (~390k clean text-only posts after filtering) sampled into three tiers — strong sexual keywords, borderline/suggestive, and no-signal — then manually labelled by Juliet Shen (ROOST, 2026-05-20).
 2. **Synthetic red-team set (50 rows)**: Hand-crafted examples across 10 categories chosen to stress-test specific clauses of the Zentropi sexual-content policy.
 
-Final test set: **129 rows, 52 violating / 77 non-violating** at `eval/sex_eval/test_set.csv`.
+Final test set: **129 rows, 52 violating / 77 non-violating** at `eval/sexual_content_eval/test_set.csv`.
 
-The Bluesky sampler hard-drops posts with images, mostly-URL posts, mostly-non-Latin posts, and anything where a sexual term co-occurs with a minor-related term (CSAM-adjacent). Source: `eval/sex_eval/sample_bsky_for_sex_eval.py`.
+The Bluesky sampler hard-drops posts with images, mostly-URL posts, mostly-non-Latin posts, and anything where a sexual term co-occurs with a minor-related term (CSAM-adjacent). Source: `eval/sexual_content_eval/sample_bsky_for_sexual_content_eval.py`.
 
 ### Policies tested
 

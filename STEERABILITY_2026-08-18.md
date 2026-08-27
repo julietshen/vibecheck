@@ -26,7 +26,7 @@ Neither probe defines a "correct" model. High policy-adherence means a model app
 | **Design** | Each model runs a baseline policy and a variant (inverted mirror, or off-topic) in the same sweep; `ground_truth` stays the original labels (positive = real self-harm / sexual content) |
 | **Inverted policies** | `eval/policies/selfharm_inverted.md`, `eval/policies/sexual_content_inverted.md` — reframe the platform as protecting the expression and define the violation as its *suppression* (anti-self-harm messaging, help resources, purity/censorship talk) |
 | **Off-topic policy** | `eval/policies/violent_extremism_offtopic.md` — a violent-extremism policy, orthogonal to both domains, no shared vocabulary; no test row is actually about this harm |
-| **Carve-out policy** | `eval/policies/sexual_content_kink_carveout.md` — baseline sexual scope minus a permitted subcategory (consensual kink/BDSM/roleplay). Diagnostic variants: `..._carveout_plain` (no kink vocabulary), `..._kink_flagonly` (reversed). Probe set `eval/sex_eval/kink_carveout_set.csv` |
+| **Carve-out policy** | `eval/policies/sexual_content_kink_carveout.md` — baseline sexual scope minus a permitted subcategory (consensual kink/BDSM/roleplay). Diagnostic variants: `..._carveout_plain` (no kink vocabulary), `..._kink_flagonly` (reversed). Probe set `eval/sexual_content_eval/kink_carveout_set.csv` |
 | **Inversion metric** | Flip rate 1→0 on gt-positive rows: of the content flagged under the baseline, how much is released under the inverted policy. Higher = more verdict change |
 | **Off-topic metric** | False-flag rate: fraction of rows flagged under the off-topic policy. Every flag is a false positive (no row matches the policy). Lower = fewer false positives |
 | **Readouts** | `python eval/steerability.py …` (inverted); `python eval/offtopic.py …` (off-topic) |
@@ -86,7 +86,7 @@ Observations:
 
 ## Carve-out results
 
-A within-domain nuance probe on the sexual-content domain. The baseline `sexual_content_simple` flags sexual content broadly; the carve-out `sexual_content_kink_carveout` keeps that scope but permits one subcategory — consensual kink/BDSM/roleplay between adults. Scored on a purpose-built 30-item probe set (`eval/sex_eval/kink_carveout_set.csv`: 12 consensual-kink, 12 other in-scope sexual, 6 benign), since a carve-out changes the correct label per row. Metric: of the content the baseline flagged, the fraction released under the carve-out, split by class. Selectivity = release(kink) − release(in-scope); scored with `eval/carveout.py`.
+A within-domain nuance probe on the sexual-content domain. The baseline `sexual_content_simple` flags sexual content broadly; the carve-out `sexual_content_kink_carveout` keeps that scope but permits one subcategory — consensual kink/BDSM/roleplay between adults. Scored on a purpose-built 30-item probe set (`eval/sexual_content_eval/kink_carveout_set.csv`: 12 consensual-kink, 12 other in-scope sexual, 6 benign), since a carve-out changes the correct label per row. Metric: of the content the baseline flagged, the fraction released under the carve-out, split by class. Selectivity = release(kink) − release(in-scope); scored with `eval/carveout.py`.
 
 | Model | Baseline flags (kink / in-scope) | Release: kink | Release: in-scope | Selectivity |
 |---|---|---|---|---|

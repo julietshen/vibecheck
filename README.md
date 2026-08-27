@@ -26,7 +26,7 @@ cd eval
 python eval.py --model shieldstral --label sh \
   --policies minimal simple medium full very_long zentropi_official \
   --probes probes/selfharm.csv
-python eval.py --model shieldstral --test-set sex_eval/test_set.csv --label sex \
+python eval.py --model shieldstral --test-set sexual_content_eval/test_set.csv --label sex \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium \
   sexual_content_zentropi_long sexual_content_oai sexual_content_oai_adapted sexual_content_very_long
 ```
@@ -45,7 +45,7 @@ modal deploy serve_cope.py
 export VLLM_API_KEY=sk-pick-something      # same value as above; pip install requests
 cd eval
 python eval.py --model cope_b --policies minimal simple medium full zentropi_official --concurrency 16
-python eval.py --model cope_b --test-set sex_eval/test_set.csv --label sex \
+python eval.py --model cope_b --test-set sexual_content_eval/test_set.csv --label sex \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium sexual_content_zentropi_long sexual_content_oai sexual_content_oai_adapted --concurrency 16
 ```
 
@@ -56,7 +56,7 @@ Expect ~$2 in Modal GPU time for the served evals end-to-end; the local Shieldst
 ```bash
 cd eval
 python eval_shieldstral.py --label sh --policies minimal simple medium full very_long zentropi_official
-python eval_shieldstral.py --test-set sex_eval/test_set.csv --label sex \
+python eval_shieldstral.py --test-set sexual_content_eval/test_set.csv --label sex \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium \
   sexual_content_zentropi_long sexual_content_oai sexual_content_oai_adapted sexual_content_very_long
 ```
@@ -68,8 +68,8 @@ The original `eval_cope.py` (Modal/cope) works the same way with `--endpoint`/`-
 ## Provenance and sanitization
 
 - The **self-harm test set** (`eval/test_set.csv`) was provided to ROOST by an external partner for evaluation use. All labelling-org identifiers in the original column names have been replaced with neutral descriptors (`ground_truth`). Post content is preserved as-is.
-- The **sexually-explicit Bluesky candidates** (`eval/sex_eval/candidates_to_label.csv`) are sampled from the public `withalim/bluesky-posts` Hugging Face dataset. Labels in that file are this author's editorial judgment (labeller: Juliet Shen, ROOST, 2026-05-20), not ground truth from a benchmark partner.
-- The **red-team set** (`eval/sex_eval/redteam_set.csv`) is synthetic content hand-crafted to stress-test policy clauses. **NSFW**: contains explicit text by design.
+- The **sexually-explicit Bluesky candidates** (`eval/sexual_content_eval/candidates_to_label.csv`) are sampled from the public `withalim/bluesky-posts` Hugging Face dataset. Labels in that file are this author's editorial judgment (labeller: Juliet Shen, ROOST, 2026-05-20), not ground truth from a benchmark partner.
+- The **red-team set** (`eval/sexual_content_eval/redteam_set.csv`) is synthetic content hand-crafted to stress-test policy clauses. **NSFW**: contains explicit text by design.
 - The **policy files** under `eval/policies/` are either (a) hand-written for this evaluation, (b) pulled from Zentropi's public labelers API, or (c) sourced from OpenAI's `teen-safety-policy-pack` repository.
 
 ## Limitations and bias risks

@@ -20,7 +20,7 @@ the exception (kept flagging the carved-out subcategory too).
 
 Usage:
     python carveout.py 'results/predictions_<model>_<label>_*.csv' \
-        --labels sex_eval/kink_carveout_set.csv \
+        --labels sexual_content_eval/kink_carveout_set.csv \
         --baseline sexual_content_simple --carveout sexual_content_kink_carveout
 """
 

@@ -11,7 +11,7 @@ Single forward pass — no sampling, no temperature, no reasoning budget.
 Usage (from eval/, using a venv with torch + transformers >= 5):
     python eval_shieldstral.py --label sh \
       --policies minimal simple medium full very_long zentropi_official
-    python eval_shieldstral.py --test-set sex_eval/test_set.csv --label sex \
+    python eval_shieldstral.py --test-set sexual_content_eval/test_set.csv --label sex \
       --policies sexual_content_minimal sexual_content_simple ...
 
 Outputs match eval_cope.py's shape:

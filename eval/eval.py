@@ -13,7 +13,7 @@ One shared core; per-model adapters under models/. An adapter is a module with:
 Usage:
     python eval.py --model shieldstral --label sh \
         --policies minimal simple medium full very_long zentropi_official
-    python eval.py --model cope_b --test-set sex_eval/test_set.csv --label sex \
+    python eval.py --model cope_b --test-set sexual_content_eval/test_set.csv --label sex \
         --policies sexual_content_minimal ... --concurrency 16
     python eval.py --model safeguard --probes probes/selfharm.csv ...
 

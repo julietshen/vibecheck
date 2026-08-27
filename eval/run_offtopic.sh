@@ -13,7 +13,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 SH_SET="test_set.csv"
-SEX_SET="sex_eval/test_set.csv"
+SEX_SET="sexual_content_eval/test_set.csv"
 OFFTOPIC="violent_extremism_offtopic"
 
 run () {  # model  label  test_set  baseline

@@ -16,7 +16,7 @@ Prepare these ahead of time so the demo isn't spent on installs and downloads:
 - **A Python 3.11+ virtualenv** with dependencies installed: `pip install -r requirements.txt`. That covers both paths — `requests` for served models, and `torch` / `transformers>=5` / `pillow` / `torchvision` for the local (Shieldstral) and multimodal runs. Apple-silicon Macs run Shieldstral on the MPS GPU; any CUDA box works too. (`modal`, for serving, is installed separately as a CLI tool — see Part 1.)
 - **A Hugging Face account + token, with the model's terms accepted.** `mistralai/Shieldstral-1.0-3B` is **gated** — click "Agree and access repository" on its HF page while logged in, then `huggingface-cli login` with a read token *before* the first run, or the weight download 401s. This applies to the local models too, not just the served ones.
 - **Weights pre-downloaded.** The first `python eval.py --model shieldstral …` pulls ~6 GB from HF (multimodal pulls a bit more). Run one throwaway `--limit 2` sweep beforehand so the download is already cached when your audience is watching.
-- **For image evals: the image files present on disk.** The image test sets reference files under `eval/scam_eval/scam_images/` and `eval/sex_eval/sex_images/`. Those directories are not part of a fresh clone — make sure they're populated on the demo machine (see [Multimodal (image) evals](#multimodal-image-evals)).
+- **For image evals: the image files present on disk.** The scam image set (`eval/scam_eval/scam_images/`) is tracked in the repo, so a clone has it. The sexual-content image set (`eval/sexual_content_eval/sexual_content_images/`) is **intentionally not distributed** (real, potentially NSFW Bluesky content — gitignored), so you must regenerate/re-fetch it locally before running that eval (see [Multimodal (image) evals](#multimodal-image-evals)).
 - **For served models only:** a Modal account (`modal token new` done), the Modal secret created, and ideally the endpoint already deployed and warmed (the first request pays a 2–3 min cold start). See Part 1.
 
 ---
@@ -301,7 +301,7 @@ eval/
 │   ├── sexual_content_*.md       # sexual-content domain (same spread + kink carve-outs, inverted)
 │   ├── scam_*.md                 # scam & spam domain
 │   └── violent_extremism_offtopic.md   # OFF-TOPIC null policy — off-topic probe
-├── sex_eval/                     # data-prep workspace for the sexual-content eval
+├── sexual_content_eval/                     # data-prep workspace for the sexual-content eval
 │   ├── build_redteam.py              # generates synthetic red-team set
 │   ├── merge_test_set.py             # combines labelled + red-team into the final test set
 │   ├── test_set.csv                  # text test set (produced by merge_test_set.py)
@@ -355,7 +355,7 @@ python eval.py --model cope_b --label sh \
 Sexual-content eval (any model):
 
 ```bash
-python eval.py --model shieldstral --test-set sex_eval/test_set.csv --label sex \
+python eval.py --model shieldstral --test-set sexual_content_eval/test_set.csv --label sex \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium \
   sexual_content_zentropi_long sexual_content_oai sexual_content_oai_adapted sexual_content_very_long
 ```
@@ -402,7 +402,7 @@ The self-harm eval used a pre-labelled CSV from a partner. For sexual content (a
 
 #### Part A — Stratified sample from a public dataset for manual labelling
 
-> **Note:** the original `sex_eval/sample_bsky_for_sex_eval.py` sampler is no longer checked in — its labelled output (`sex_eval/candidates_to_label.csv`) and the merged `test_set.csv` remain. The pattern below is still the methodology we follow; `scam_eval/build_image_set.py` is the closest live worked example (it assembles the image test set with the same tiering + hard-drop approach). Treat the commands here as the recipe to re-implement, not a script to run as-is.
+> **Note:** the original `sexual_content_eval/sample_bsky_for_sexual_content_eval.py` sampler is no longer checked in — its labelled output (`sexual_content_eval/candidates_to_label.csv`) and the merged `test_set.csv` remain. The pattern below is still the methodology we follow; `scam_eval/build_image_set.py` is the closest live worked example (it assembles the image test set with the same tiering + hard-drop approach). Treat the commands here as the recipe to re-implement, not a script to run as-is.
 
 The sampler pattern downloads one shard of a public Bluesky post dataset (~130 MB, ~390k posts) and filters it into three "tiers":
 
@@ -425,7 +425,7 @@ It pulls roughly 35 / 30 / 15 = **80 posts** to a `candidates_to_label.csv` with
 
 A real dataset alone leaves blind spots: the exclusions and edge cases that policy writers worry about (recovery narratives, educational content, fictional framings) appear too rarely in random samples to drive metrics. So we also write a 50-row hand-crafted set covering categories chosen to stress-test specific policy clauses.
 
-`sex_eval/build_redteam.py` is a worked example. Each of its 10 categories targets a clause in the cope sexual-content policy:
+`sexual_content_eval/build_redteam.py` is a worked example. Each of its 10 categories targets a clause in the cope sexual-content policy:
 
 - clear explicit sex acts (5, expected 1)
 - explicit invitations / participation offers (5, expected 1)
@@ -446,10 +446,10 @@ Once labels are filled in:
 
 ```bash
 python merge_test_set.py
-# combines labelled + redteam into sex_eval/test_set.csv
+# combines labelled + redteam into sexual_content_eval/test_set.csv
 cd ..
 python eval.py --model shieldstral \
-  --test-set sex_eval/test_set.csv \
+  --test-set sexual_content_eval/test_set.csv \
   --label sex \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium sexual_content_zentropi_long sexual_content_oai
 ```
@@ -470,7 +470,7 @@ The same harness scores **images** — no core changes. The trick: the test-set 
 cd eval
 python eval.py --model shieldstral_mm --test-set scam_eval/test_set_images.csv --label images \
   --policies scam_minimal scam_simple scam_full scam_spam_inclusive
-python eval.py --model shieldstral_mm --test-set sex_eval/test_set_sex_images.csv --label seximg \
+python eval.py --model shieldstral_mm --test-set sexual_content_eval/test_set_sex_images.csv --label seximg \
   --policies sexual_content_minimal sexual_content_simple sexual_content_medium sexual_content_very_long
 ```
 
@@ -479,7 +479,7 @@ Two content shapes the multimodal adapter accepts in the `content` column:
 - **A plain image path** — judge the image alone (`scam_eval/test_set_images.csv`).
 - **A JSON object `{"image": <path>, "text": <caption>}`** — judge the image *together with* the post's caption text (`scam_eval/test_set_images_caption.csv`). This is how you test whether a caption changes the model's read of the picture.
 
-**Image paths are stored relative to the `eval/` directory** (e.g. `scam_eval/scam_images/scamimg001.jpg`) so the test sets are portable across machines. The adapter resolves a relative path against `eval/` regardless of where you launch from, or against `--model-arg image_base=/some/dir` if your images live elsewhere. **The image files themselves are not in a fresh clone** — the `scam_images/` and `sex_images/` directories must be populated on the demo machine first (`scam_eval/build_image_set.py` is the worked example of downloading and assembling one).
+**Image paths are stored relative to the `eval/` directory** (e.g. `scam_eval/scam_images/scamimg001.jpg`) so the test sets are portable across machines. The adapter resolves a relative path against `eval/` regardless of where you launch from, or against `--model-arg image_base=/some/dir` if your images live elsewhere. The **scam** image binaries are tracked in the repo. The **sexual-content** image binaries (`sexual_content_eval/sexual_content_images/`) are gitignored and not distributed — regenerate them locally before running that eval. `scam_eval/build_image_set.py` is the worked example of downloading and assembling an image set.
 
 ### Scam, spam, and multilingual domains
 
@@ -560,7 +560,7 @@ Run any of them the same way:
 python eval.py --model shieldstral --label sh \
   --policies minimal simple medium full very_long zentropi_official \
   --probes probes/selfharm.csv
-python eval.py --model cope_b --test-set sex_eval/test_set.csv --label sex \
+python eval.py --model cope_b --test-set sexual_content_eval/test_set.csv --label sex \
   --policies sexual_content_minimal ... --concurrency 16
 # override any adapter default without editing code:
 python eval.py --model safeguard ... --model-arg max_tokens=4096 --model-arg prompt_style=chat
@@ -604,8 +604,8 @@ Because every adapter returns the same `(pred, raw)` and the harness owns the ou
 | `eval/test_set.csv` | Default test set (self-harm, 100 rows; column identifiers sanitized) |
 | `eval/policies/*.md` | Policy variants — one per file, name passed to `--policies` |
 | `eval/results/` | Output CSVs (predictions + summary) timestamped per run |
-| `eval/sex_eval/`, `eval/scam_eval/` | Data-prep workspaces (samplers, red-team, image sets) per domain |
-| `eval/sex_eval/build_redteam.py` | Generates 50 synthetic red-team cases |
-| `eval/sex_eval/merge_test_set.py` | Combines labelled + red-team into final test set |
+| `eval/sexual_content_eval/`, `eval/scam_eval/` | Data-prep workspaces (samplers, red-team, image sets) per domain |
+| `eval/sexual_content_eval/build_redteam.py` | Generates 50 synthetic red-team cases |
+| `eval/sexual_content_eval/merge_test_set.py` | Combines labelled + red-team into final test set |
 | `eval/*/test_set_images*.csv` | Image test sets — `content` column is a relative image path |
 | `eval/eval_cope.py`, `eval/eval_shieldstral.py` | Original single-model scripts, superseded by `eval.py` |

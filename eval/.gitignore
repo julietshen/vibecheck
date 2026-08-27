@@ -1,0 +1,6 @@
+# Sexual-content image test set: real sampled Bluesky images, intentionally NOT
+# distributed in this public repo (NSFW / real-person content). Regenerate or
+# re-fetch locally to run the multimodal sexual-content eval. The paired CSVs
+# (test_set_sex_images.csv, image_set_for_labeling.csv) are tracked; only the
+# image binaries are withheld.
+sexual_content_eval/sexual_content_images/
