@@ -6,11 +6,12 @@ Runs to date evaluate `zentropi-ai/cope-b-a4b`, `zentropi-ai/cope-a-9b`, `openai
 
 > Previously named `cope-evaluation`, when it was a single-model eval of cope; renamed as it grew into a general harness.
 
-**Round 2 (August 2026):** `mistralai/Shieldstral-1.0-3B` run on the same test sets and policies, locally (no GPU rental). Best F1 0.922 (self-harm) / 0.852 (sexual content) — just behind cope-b at 1/16th the size. See the round-2 section of RESULTS.md.
+**Round 2 (August 2026):** `mistralai/Shieldstral-1.0-3B` run on the same test sets and policies, locally (no GPU rental). Best F1 0.898 (self-harm) / 0.803 (sexual content) — just behind cope-b at 1/16th the size. See the round-2 section of RESULTS.md. This round also added a **steerability** axis — how much each model tracks the policy text vs. the content's topic (see [STEERABILITY.md](STEERABILITY.md)).
 
 ## What's in here
 
 - **[RESULTS.md](RESULTS.md)** — the findings. Per-policy precision/recall/F1, head-to-head against gpt-oss-safeguard, comparison against Zentropi's published benchmark, RMC inclusion recommendation. **Start here.**
+- **[STEERABILITY.md](STEERABILITY.md)** — a separate axis: does a model apply the *policy text* it's given, or a fixed notion of the *topic*? Three probes — inverted policy (verdict flip rate), off-topic policy (false-flag rate), and within-domain carve-out (selective release). cope-a/cope-b/safeguard are policy-steerable (90–100% flip under an inverted policy); Shieldstral is a fixed-prior topic detector (weak, asymmetric flip — 27% self-harm, 0% sexual). Includes a defense-in-depth model-stacking argument from the complementary failure modes.
 - **[GUIDE.md](GUIDE.md)** — the general playbook this evaluation followed. Serving any open-weight policy classifier on Modal, building test sets, running the eval harness, adapting for a different model.
 - `serve_cope.py` — Modal deployment recipe.
 - `eval/` — the harness (`eval.py` + `models/` adapters), policies, test sets, and per-run prediction/summary CSVs.
