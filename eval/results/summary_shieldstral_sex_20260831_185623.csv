@@ -1,0 +1,8 @@
+policy,n,tp,fp,fn,tn,errors,precision,recall,f1,accuracy
+sexual_content_minimal,129,48,21,4,56,0,0.696,0.923,0.793,0.806
+sexual_content_simple,129,51,25,1,52,0,0.671,0.981,0.797,0.798
+sexual_content_medium,129,52,33,0,44,0,0.612,1.000,0.759,0.744
+sexual_content_zentropi_long,129,52,35,0,42,0,0.598,1.000,0.748,0.729
+sexual_content_oai,129,52,31,0,46,0,0.627,1.000,0.770,0.760
+sexual_content_oai_adapted,129,51,24,1,53,0,0.680,0.981,0.803,0.806
+sexual_content_very_long,129,52,42,0,35,0,0.553,1.000,0.712,0.674

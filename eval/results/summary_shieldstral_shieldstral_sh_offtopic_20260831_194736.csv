@@ -1,0 +1,3 @@
+policy,n,tp,fp,fn,tn,errors,precision,recall,f1,accuracy
+simple,100,26,4,24,46,0,0.867,0.520,0.650,0.720
+violent_extremism_offtopic,100,11,0,39,50,0,1.000,0.220,0.361,0.610

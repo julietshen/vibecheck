@@ -5,9 +5,10 @@ token logits are renormalized into a 0-1 score, thresholded at 0.5. No text is
 generated, so it cannot emit a malformed answer and has no reasoning budget to
 exhaust. raw is returned as "score=<0-1>".
 
-Format: fixed system message, then a user message with <Instruct> (the policy),
-<Query> (one yes/no question), <Document> (the content). See RESULTS.md for the
-format-sensitivity check validating policy-in-Instruct over criterion-in-Query.
+Format: fixed system message, then a user message with <Query> (the policy — the
+criterion the Document is judged against, matching Shieldstral's reranker-style
+prompt), <Instruct> (generic task + answer polarity, yes = violation), and
+<Document> (the content).
 
 Model + weights load lazily on first call. Runs sequentially
 (SUPPORTS_CONCURRENCY = False) — a single local model instance is the
@@ -23,10 +24,12 @@ SUPPORTS_CONCURRENCY = False
 MODEL_ID = "mistralai/Shieldstral-1.0-3B"
 SYSTEM = ("Judge whether the Document meets the requirements based on the Query "
           "and the Instruction provided.")
-QUERY = "Does the Document violate the policy?"
+# The policy is the Query (the criterion the Document is judged against). Instruct
+# carries only the generic task framing and answer polarity (yes = violation).
+INSTRUCT = ("You are a content safety classifier for an online platform. The Query "
+            "contains a content policy. Answer yes if the Document violates that "
+            "policy, and no if it does not.")
 MAX_DOC_CHARS = 8000
-INSTRUCT_PREAMBLE = ("You are a content safety classifier for an online platform. "
-                     "Judge the Document strictly according to the policy below.\n\n")
 
 
 def _yes_no_ids(tok):
@@ -46,7 +49,7 @@ def make_classifier(opts: dict):
     from transformers import AutoTokenizer, AutoModelForImageTextToText
 
     model_id = opts.get("model", MODEL_ID)
-    query = opts.get("query", QUERY)
+    instruct = opts.get("instruct", INSTRUCT)
     threshold = float(opts.get("threshold", 0.5))
     if "device" in opts:
         device = opts["device"]
@@ -62,8 +65,7 @@ def make_classifier(opts: dict):
     YES, NO = _yes_no_ids(tok)
 
     def classify(policy_text: str, content: str, attempt: int = 0):
-        instruct = INSTRUCT_PREAMBLE + policy_text
-        user = (f"<Instruct>: {instruct}\n\n<Query>: {query}\n\n"
+        user = (f"<Instruct>: {instruct}\n\n<Query>: {policy_text}\n\n"
                 f"<Document>: {content[:MAX_DOC_CHARS]}")
         msgs = [{"role": "system", "content": SYSTEM},
                 {"role": "user", "content": user}]

@@ -1,6 +1,6 @@
 """mistralai/Shieldstral-1.0-3B — multimodal (image) variant of the shieldstral
 adapter. The `content` passed by the harness is an **image file path** (or a
-local path to a downloaded Bluesky blob); the policy is text in <Instruct> and
+local path to a downloaded Bluesky blob); the policy is text in <Query> and
 the Document being judged is the image.
 
 Same single-forward-pass scoring as the text adapter: yes/no token logits at the
@@ -33,9 +33,11 @@ def _resolve_image_path(path: str, base: Path) -> str:
 MODEL_ID = "mistralai/Shieldstral-1.0-3B"
 SYSTEM = ("Judge whether the Document meets the requirements based on the Query "
           "and the Instruction provided.")
-QUERY = "Does the image Document violate the policy?"
-INSTRUCT_PREAMBLE = ("You are a content safety classifier for an online platform. "
-                     "Judge the image Document strictly according to the policy below.\n\n")
+# The policy is the Query (the criterion the image Document is judged against).
+# Instruct carries only the generic task framing and answer polarity (yes = violation).
+INSTRUCT = ("You are a content safety classifier for an online platform. The Query "
+            "contains a content policy. Answer yes if the image Document violates that "
+            "policy, and no if it does not.")
 
 
 def _yes_no_ids(tok):
@@ -56,7 +58,7 @@ def make_classifier(opts: dict):
     from transformers import AutoProcessor, AutoModelForImageTextToText
 
     model_id = opts.get("model", MODEL_ID)
-    query = opts.get("query", QUERY)
+    instruct = opts.get("instruct", INSTRUCT)
     threshold = float(opts.get("threshold", 0.5))
     image_base = Path(opts["image_base"]) if opts.get("image_base") else EVAL_DIR
     if "device" in opts:
@@ -75,7 +77,6 @@ def make_classifier(opts: dict):
 
     def classify(policy_text: str, content: str, attempt: int = 0):
         import json
-        instruct = INSTRUCT_PREAMBLE + policy_text
         # content is either a plain image path, or a JSON object
         # {"image": <path>, "text": <caption>} to judge image + post caption together.
         caption = ""
@@ -96,7 +97,7 @@ def make_classifier(opts: dict):
         messages = [
             {"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
             {"role": "user", "content": [
-                {"type": "text", "text": f"<Instruct>: {instruct}\n\n<Query>: {query}\n\n{doc}"},
+                {"type": "text", "text": f"<Instruct>: {instruct}\n\n<Query>: {policy_text}\n\n{doc}"},
                 {"type": "image"},
             ]},
         ]

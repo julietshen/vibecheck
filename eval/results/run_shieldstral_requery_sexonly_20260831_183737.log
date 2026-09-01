@@ -1,0 +1,34 @@
+=== SEX baseline resume (very_long remaining) ===
+Loading weights:   0%|          | 0/458 [00:00<?, ?it/s]Loading weights: 100%|██████████| 458/458 [00:00<00:00, 6128.58it/s]
+model=Shieldstral-1.0-3B  rows=129  policies=['sexual_content_minimal', 'sexual_content_simple', 'sexual_content_medium', 'sexual_content_zentropi_long', 'sexual_content_oai', 'sexual_content_oai_adapted', 'sexual_content_very_long']  concurrency=1
+[sexual_content_minimal] resuming, 129 already scored
+[sexual_content_minimal] complete
+[sexual_content_simple] resuming, 129 already scored
+[sexual_content_simple] complete
+[sexual_content_medium] resuming, 129 already scored
+[sexual_content_medium] complete
+[sexual_content_zentropi_long] resuming, 129 already scored
+[sexual_content_zentropi_long] complete
+[sexual_content_oai] resuming, 129 already scored
+[sexual_content_oai] complete
+[sexual_content_oai_adapted] resuming, 129 already scored
+[sexual_content_oai_adapted] complete
+[sexual_content_very_long] resuming, 55 already scored
+[sexual_content_very_long] 80/129 (0.07/s, eta 11 min)
+[sexual_content_very_long] 105/129 (0.07/s, eta 6 min)
+[sexual_content_very_long] 129/129 (0.07/s, eta 0 min)
+[sexual_content_very_long] complete
+
+wrote predictions: /Users/julietshen/ROOST/vibecheck/eval/results/predictions_shieldstral_sex_20260831_185623.csv
+
+policy                                  n   tp   fp   fn   tn  err   prec    rec     f1    acc
+----------------------------------------------------------------------------------------------------
+sexual_content_minimal                129   48   21    4   56    0  0.696  0.923  0.793  0.806
+sexual_content_simple                 129   51   25    1   52    0  0.671  0.981  0.797  0.798
+sexual_content_medium                 129   52   33    0   44    0  0.612  1.000  0.759  0.744
+sexual_content_zentropi_long          129   52   35    0   42    0  0.598  1.000  0.748  0.729
+sexual_content_oai                    129   52   31    0   46    0  0.627  1.000  0.770  0.760
+sexual_content_oai_adapted            129   51   24    1   53    0  0.680  0.981  0.803  0.806
+sexual_content_very_long              129   52   42    0   35    0  0.553  1.000  0.712  0.674
+wrote summary: /Users/julietshen/ROOST/vibecheck/eval/results/summary_shieldstral_sex_20260831_185623.csv
+=== SEX DONE ===

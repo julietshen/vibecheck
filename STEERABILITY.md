@@ -10,6 +10,8 @@ To what extent does each model's output track the **policy text** versus the **t
 
 Neither probe defines a "correct" model. High policy-adherence means a model applies whatever policy it is given (configurable, but the policy author owns all safety decisions). Low policy-adherence means a model applies a more fixed notion of harm regardless of policy wording (more resistant to a bad or adversarial policy, but harder to reconfigure). The results below report the measured behavior; which profile is desirable depends on the deployment.
 
+> **Placement update (2026-08-31).** The Shieldstral rows below have been **re-run under the current policy-in-`<Query>` placement** (see the placement finding in [RESULTS.md](RESULTS.md)); the tables now report those numbers, and cope-a/cope-b/safeguard are unchanged (different models, unchanged formats). Placement is a real lever and it partially revises the headline: under Query-placement Shieldstral **does** release some flagged self-harm content under an inverted policy (inversion flip 0% → **27%**), so the earlier "0% steerable / wording never moves it" was too strong. But the shift is weak and asymmetric — the sexual domain stays at 0% flip, off-topic leakage rises rather than falls (12% → 22% on self-harm), and the within-domain carve-out still isn't applied (selectivity goes *negative*). The qualitative conclusion holds: Shieldstral is far less steerable than the policy-adherent models and behaves as a fixed-prior topic detector — it is simply somewhat *more* reactive, and more flag-happy, with the policy in Query. Old Instruct-placement figures are noted inline where the change is material.
+
 ## Models
 
 | Model | Type | Serving |
@@ -32,7 +34,7 @@ Neither probe defines a "correct" model. High policy-adherence means a model app
 | **Readouts** | `python eval/steerability.py …` (inverted); `python eval/offtopic.py …` (off-topic) |
 | **Rows** | self-harm n=100 (50 gt+ / 50 gt−); sexual n=129 (52 gt+ / 77 gt−) |
 | **Empty predictions** | 0, except 1 on the safeguard off-topic sexual baseline column (immaterial to that run's off-topic result) |
-| **Dates** | inverted + off-topic (Shieldstral/cope) 2026-08-18; safeguard + off-topic (cope) 2026-08-19 |
+| **Dates** | inverted + off-topic (Shieldstral/cope) 2026-08-18; safeguard + off-topic (cope) 2026-08-19; **Shieldstral re-run under policy-in-`<Query>` placement 2026-08-31** (numbers in the Shieldstral rows below) |
 
 ## Inversion results
 
@@ -40,17 +42,19 @@ Flip rate = of gt-positive content the baseline flagged, the fraction released (
 
 | Model | Self-harm flip | Sexual flip |
 |---|---|---|
-| Shieldstral-1.0-3B | 0/19 (0%) | 0/48 (0%) |
+| Shieldstral-1.0-3B (Query-placement) | 7/26 (27%) | 0/51 (0%) |
 | cope-a-9b | 23/23 (100%) | 35/38 (92%) |
 | cope-b-a4b | 32/32 (100%) | 48/50 (96%) |
 | gpt-oss-safeguard-20b | 26/29 (90%) | 41/44 (93%) |
+
+(Shieldstral under the old Instruct-placement: self-harm 0/19 (0%), sexual 0/48 (0%).)
 
 Full per-run figures, including movement on the negative class (benign under the baseline, defined as the new violation under inversion):
 
 | Model | Domain | Baseline gt+ flagged | Flip 1→0 | Inverted gt+ still flagged | gt− flagged: base → inverted |
 |---|---|---|---|---|---|
-| Shieldstral | self-harm | 19/50 (38%) | 0/19 (0%) | 28/50 (56%) | 4% → 8% |
-| Shieldstral | sexual | 48/52 (92%) | 0/48 (0%) | 51/52 (98%) | 26% → 36% |
+| Shieldstral | self-harm | 26/50 (52%) | 7/26 (27%) | 23/50 (46%) | 8% → 8% |
+| Shieldstral | sexual | 51/52 (98%) | 0/51 (0%) | 52/52 (100%) | 32% → 42% |
 | cope-a | self-harm | 23/50 (46%) | 23/23 (100%) | 0/50 (0%) | 4% → 8% |
 | cope-a | sexual | 38/52 (73%) | 35/38 (92%) | 3/52 (6%) | 6% → 3% |
 | cope-b | self-harm | 32/50 (64%) | 32/32 (100%) | 1/50 (2%) | 0% → 84% |
@@ -59,7 +63,7 @@ Full per-run figures, including movement on the negative class (benign under the
 | safeguard | sexual | 44/52 (85%) | 41/44 (93%) | 3/52 (6%) | 13% → 6% |
 
 Observations:
-- Shieldstral released 0% of flagged content under either inverted policy, and its total flag rate on gt-positive rows rose (self-harm 38%→56%, sexual 92%→98%), as did flagging of the negative class. The inverted policies contain more sensitive-topic vocabulary than the baselines.
+- Under Query-placement, Shieldstral released **27% of flagged self-harm content** under the inverted policy (7/26) — no longer the 0% seen under Instruct-placement — but **0% on sexual** (0/51). So placement gives it partial, domain-asymmetric steerability, still far below the 90–100% of the policy-adherent models. On both domains its flag rate on gt-positive rows still *rose* under inversion (self-harm 52%→ inverted 46% still-flagged out of a larger base; sexual 98%→100%), and negative-class flagging rose (sexual 32%→42%): the inverted policies carry more sensitive-topic vocabulary than the baselines, which pulls the topic-detector the opposite way from the policy's intent.
 - cope-a, cope-b, and safeguard released 90–100% of flagged content on both domains.
 - Two models increased flagging of the negative class under the inverted self-harm policy (the direction the inverted policy defines as its new target): cope-b 0%→84% and safeguard 6%→30%. On the sexual domain no model increased negative-class flagging.
 
@@ -69,8 +73,8 @@ Under the off-topic policy the correct label is not-a-violation on every row, so
 
 | Model | Domain | Aligned baseline flags | Off-topic false-flag (gt+ / all) |
 |---|---|---|---|
-| Shieldstral | self-harm | 19/50 (38%) | 6/50 (12%) / 6/100 (6%) |
-| Shieldstral | sexual | 48/52 (92%) | 0/52 (0%) / 2/129 (2%) |
+| Shieldstral | self-harm | 26/50 (52%) | 11/50 (22%) / 11/100 (11%) |
+| Shieldstral | sexual | 51/52 (98%) | 1/52 (2%) / 3/129 (2%) |
 | cope-a | self-harm | 23/50 (46%) | 0/50 (0%) / 0/100 (0%) |
 | cope-a | sexual | 38/52 (73%) | 0/52 (0%) / 0/129 (0%) |
 | cope-b | self-harm | 32/50 (64%) | 0/50 (0%) / 0/100 (0%) |
@@ -81,8 +85,8 @@ Under the off-topic policy the correct label is not-a-violation on every row, so
 Observations:
 - cope-a and cope-b produced 0 false flags on all rows under the off-topic policy, while flagging 46–96% under their aligned policies.
 - safeguard produced 0 false flags on the sexual domain and 2 (4% of gt+) on the self-harm domain.
-- Shieldstral produced 6 false flags (12% of gt+) on the self-harm domain and 2 (on the negative class, 0% of gt+) on the sexual domain.
-- The non-zero self-harm false flags for Shieldstral and safeguard occur on self-harm content under a violence policy; sexual content produced 0 gt+ false flags for every model. Self-harm and violent-extremism content share surface features (violence) that the sexual and violent-extremism domains do not.
+- Shieldstral produced 11 false flags (22% of gt+) on the self-harm domain and 3 (1 on gt+, 2%) on the sexual domain — up from 12%/0% under Instruct-placement, consistent with Query-placement making it flag more overall. Its off-topic leakage went *up*, not down, so the extra policy-reactivity seen in the inversion probe does not translate into better scope discipline.
+- The non-zero self-harm false flags for Shieldstral and safeguard occur on self-harm content under a violence policy; sexual content produced ≤2% gt+ false flags for every model. Self-harm and violent-extremism content share surface features (violence) that the sexual and violent-extremism domains do not.
 
 ## Carve-out results
 
@@ -90,41 +94,43 @@ A within-domain nuance probe on the sexual-content domain. The baseline `sexual_
 
 | Model | Baseline flags (kink / in-scope) | Release: kink | Release: in-scope | Selectivity |
 |---|---|---|---|---|
-| Shieldstral-1.0-3B | 12/12 / 12/12 | 1/12 (8%) | 0/12 (0%) | +8 |
+| Shieldstral-1.0-3B (Query-placement) | 12/12 / 12/12 | 0/12 (0%) | 2/12 (17%) | −17 |
 | cope-a-9b | 10/12 / 9/12 | 10/10 (100%) | 0/9 (0%) | +100 |
 | cope-b-a4b | 12/12 / 11/12 | 12/12 (100%) | 1/11 (9%) | +91 |
 | gpt-oss-safeguard-20b | 10/12 / 12/12 | 10/10 (100%) | 0/12 (0%) | +100 |
 
 Observations:
 - cope-a, cope-b, and safeguard released 100% of the flagged kink items while continuing to flag 91–100% of the in-scope items (selectivity +91 to +100) — the carve-out was applied to the named subcategory only.
-- Shieldstral released 1 of 12 flagged kink items (selectivity +8): it continued to flag consensual kink content the carve-out permits.
+- Shieldstral (Query-placement) released **0 of 12** flagged kink items and instead released 2 of 12 in-scope items, for **negative selectivity (−17)**: it still flags all the consensual kink the carve-out permits while dropping content the carve-out keeps in scope — the opposite of a selective exception. Under Instruct-placement it released 1/12 kink for +8; either way it does not apply the carve-out.
 - All four models flagged 0/6 benign items under both policies.
 
 ## Shieldstral policy diagnostics: is the wording the cause?
 
 To separate "the policy wording is the issue" from "the model does not condition on the policy," Shieldstral was run on the kink probe set under four sexual-content policies that differ only in what they instruct, holding content fixed. Flag rates by class:
 
+Flag rates below are under the current Query-placement (Instruct-placement values in parentheses where they differ):
+
 | Policy (instruction) | Kink flagged | In-scope flagged | Benign |
 |---|---|---|---|
 | `sexual_content_simple` (flag all sexual) | 12/12 (100%) | 12/12 (100%) | 0/6 |
-| `sexual_content_kink_carveout` (permit kink, keyword-heavy) | 11/12 (91%) | 12/12 (100%) | 0/6 |
-| `sexual_content_kink_carveout_plain` (permit kink, no kink vocabulary) | 12/12 (100%) | 12/12 (100%) | 0/6 |
-| `sexual_content_kink_flagonly` (flag ONLY kink, allow the rest) | 12/12 (100%) | 12/12 (100%) | 0/6 |
+| `sexual_content_kink_carveout` (permit kink, keyword-heavy) | 12/12 (100%) | 10/12 (83%) | 0/6 |
+| `sexual_content_kink_carveout_plain` (permit kink, no kink vocabulary) | 12/12 (100%) | 9/12 (75%) | 0/6 |
+| `sexual_content_kink_flagonly` (flag ONLY kink, allow the rest) | 12/12 (100%) | 7/12 (58%) | 0/6 |
 
-A model reading the policy would show kink 0 / in-scope 12 under the two carve-out policies, and kink 12 / in-scope 0 under flag-only. Shieldstral flagged ~all sexual content under every variant, including the plain-language carve-out (no kink vocabulary to react to) and the flag-only policy (which instructs the opposite). The wording did not move it; the behavior tracks the content's topic.
+A model reading the policy would show kink 0 / in-scope 12 under the two carve-out policies, and kink 12 / in-scope 0 under flag-only. Under Query-placement Shieldstral's **kink verdict is immovable — 12/12 flagged under every variant, including the plain-language carve-out (no kink vocabulary to react to) and the flag-only policy that instructs the exact opposite.** The only thing the wording moves is the *in-scope* count, which drifts *down* as the policies pile on carve-out/exception language (12 → 10 → 9 → 7) — i.e. the model reacts to the presence of permissive-sounding text by flagging slightly less overall, not by releasing the named subcategory. It still doesn't read the carve-out; the behavior tracks the content's topic. (Under Instruct-placement in-scope stayed pinned at 12/12 and kink at ~12/12 across all four — Query-placement adds noise, not policy comprehension.)
 
-A separate strictness probe (three policies varying threshold at constant scope, on the 129-row sexual set) moved Shieldstral's flag count in the direction *opposite* the instruction: `lenient` (allow all but graphic) flagged 75, `simple` 68, `strict` (flag any hint) 60. Its threshold was not controllable by the stated strictness.
+A separate strictness probe (three policies varying threshold at constant scope, on the 129-row sexual set) again moved Shieldstral's flag count in the direction *opposite* the instruction: `lenient` (allow all but graphic) flagged 78, `simple` 76, `strict` (flag any hint) 70 (Instruct-placement: 75 / 68 / 60 — same ordering, higher counts throughout under Query-placement). Its threshold was not controllable by the stated strictness.
 
 ## Cross-probe summary
 
 | Model | Inversion flip (sh / sex) | Off-topic false-flag, gt+ (sh / sex) | Carve-out selectivity (sexual) |
 |---|---|---|---|
-| Shieldstral-1.0-3B | 0% / 0% | 12% / 0% | +8 |
+| Shieldstral-1.0-3B (Query-placement) | 27% / 0% | 22% / 2% | −17 |
 | cope-a-9b | 100% / 92% | 0% / 0% | +100 |
 | cope-b-a4b | 100% / 96% | 0% / 0% | +91 |
 | gpt-oss-safeguard-20b | 90% / 93% | 4% / 0% | +100 |
 
-The three probes are consistent per model: cope-a, cope-b, and safeguard change verdicts with the inverted policy, rarely flag under the off-topic policy, and apply the carve-out selectively; Shieldstral does none of the three, and the diagnostics above indicate this is not attributable to policy wording, vocabulary, or stated strictness. Restating the framing from the top: a high-adherence profile is configurable but places all safety judgment on the policy author, while a low-adherence profile applies a more fixed harm prior. This evaluation measures adherence; it does not rank the profiles.
+The three probes are consistent per model: cope-a, cope-b, and safeguard change verdicts with the inverted policy, rarely flag under the off-topic policy, and apply the carve-out selectively. Shieldstral does **none of the three well** — even with the policy in `<Query>` (its stronger placement) it only partially flips on self-harm inversion (27%, vs 0% on sexual), leaks *more* under the off-topic policy (22% gt+), and posts negative carve-out selectivity. The diagnostics above indicate its residual policy-reactivity is topic/vocabulary-driven, not comprehension of the policy's allow/deny structure. Restating the framing from the top: a high-adherence profile is configurable but places all safety judgment on the policy author, while a low-adherence profile applies a more fixed harm prior. This evaluation measures adherence; it does not rank the profiles.
 
 ## Strengths and limitations
 
@@ -132,7 +138,7 @@ Drawing on both these probes and the aligned-policy accuracy in [RESULTS.md](RES
 
 | Model | Strengths | Limitations |
 |---|---|---|
-| **Shieldstral-1.0-3B** | 3B, runs locally with no GPU serving; malformed-output-free by construction; competitive aligned accuracy (F1 ~0.92 self-harm, ~0.85 sexual) | 0% inversion flip and 12% off-topic self-harm false flags (tracks topic, not policy scope); low accuracy with a one-line policy (F1 ~0.27), so it depends on a detailed policy; verdict only, no reasoning |
+| **Shieldstral-1.0-3B** | 3B, runs locally with no GPU serving; malformed-output-free by construction; competitive aligned accuracy (F1 ~0.90 self-harm, ~0.80 sexual, Query-placement) | Weak, asymmetric steerability (inversion flip 27% self-harm / 0% sexual) and 11–22% off-topic self-harm false flags (tracks topic, not policy scope); does not apply within-domain carve-outs (selectivity −17); low accuracy with a one-line policy (F1 ~0.41), so it depends on a detailed policy; verdict only, no reasoning |
 | **cope-a-9b** | Fully policy-adherent (100%/92% flip, 0% off-topic); reconfigurable via policy text | ~0.10–0.23 F1 below cope-b; hard 8K-token context ceiling (cannot load long policies); needs GPU serving + auth; verdict only, no reasoning or rationale |
 | **cope-b-a4b** | Highest aligned accuracy (F1 ~0.936 self-harm, ~0.885 sexual, precision ~1.0 on most self-harm policies, 100% clean output); fully policy-adherent and the only model to strongly adopt the inverted target (neg 0%→84%) | Largest cope model (~50 GB), most costly to serve; very long policies can lower F1; sensitive to endpoint shape; verdict only, no reasoning or rationale |
 | **gpt-oss-safeguard-20b** | Policy-adherent (90%/93% flip, ≤4% off-topic); emits chain-of-thought reasoning (auditable verdicts); second model to move toward the inverted target (neg 6%→30%) | Largest/slowest (20B reasoning), highest cost/latency; empty-response failure mode when the reasoning budget is exhausted; small residual self-harm off-topic leakage (4%) |
@@ -143,7 +149,7 @@ The models span two coherent profiles, and which is preferable is deployment-dep
 
 The two profiles above have *complementary* failure modes, which makes them candidates for a Swiss-cheese arrangement — layered classifiers where each layer's holes are covered by another layer's solid part, so no single weakness passes all the way through. The key property this evaluation surfaces: a fixed-prior model and a policy-adherent model do not fail on the same inputs.
 
-- **A fixed-prior layer (Shieldstral)** flags topically sensitive content regardless of policy wording. Its hole is over-triggering and no policy nuance. But because it is *not* steerable, it doubles as a backstop against a mistaken or adversarial policy: it will still flag self-harm content even if the active policy has been edited to permit it — exactly the case where a policy-adherent model goes silent.
+- **A fixed-prior layer (Shieldstral)** flags topically sensitive content largely regardless of policy wording. Its hole is over-triggering and little policy nuance. But because it is only weakly steerable, it doubles as a backstop against a mistaken or adversarial policy: it still flags most self-harm content even if the active policy has been edited to permit it (under an inverted self-harm policy it released only ~27%, and 0% under an inverted sexual policy) — exactly the case where a policy-adherent model goes fully silent. The 27% self-harm release means the backstop is strong but not absolute; pair it with a purpose-built guardrail for any category where near-zero leakage is required.
 - **A policy-adherent, high-precision layer (cope-b / cope-a)** applies the actual policy to what the first layer surfaces: it removes the fixed-prior layer's false positives, honors carve-outs and scope, and is cheap to reconfigure. Its hole is that it trusts the policy fully — covered above by the fixed-prior backstop, and below by a reasoning tier.
 - **A reasoning / adjudication layer (safeguard)** handles borderline, appealed, or high-stakes items and emits an auditable rationale. Its independent reasoning path catches errors the classifier layers share, at the cost of the highest latency — so it is applied selectively, not to every item.
 - **A single-purpose guardrail (Mila's lightweight BERT guardrail)** is a small encoder-only classifier trained for exactly one detection target. It adds a dedicated, near-zero-cost slice for that one category, run on every item independent of the general models' policy conditioning. Its hole is precisely that it covers only its one purpose — but within that purpose it is cheap and reliable, so it catches its target harm even when a general model's policy framing would let it through. Several such narrow guardrails can be stacked, one per high-priority category.
@@ -154,5 +160,5 @@ Illustrative stack: always-on cheap layers first — Shieldstral as a local, hig
 
 - **Scoring caveat.** The `summary_*_steer_*.csv` and `summary_*_offtopic_*.csv` files score the variant policy against the *original* ground-truth labels. For the inverted and off-topic columns those labels are not the relevant target, so their F1/accuracy do not describe steerability — use `steerability.py` / `offtopic.py`.
 - **Auth.** The cope and safeguard Modal endpoints require `VLLM_API_KEY`. A run without it returns 401 on every row (empty predictions); `offtopic.py` warns when any prediction is empty.
-- **Artefacts.** `eval/results/predictions_{shieldstral,cope_a,cope_b,safeguard}_*_{steer,offtopic,kink_carveout}_*.csv` plus Shieldstral's `_kink_variants` and `_strictness` runs, scored via `eval/steerability.py`, `eval/offtopic.py`, and `eval/carveout.py`.
+- **Artefacts.** `eval/results/predictions_{shieldstral,cope_a,cope_b,safeguard}_*_{steer,offtopic,kink_carveout}_*.csv` plus Shieldstral's `_kink_variants` and `_strictness` runs, scored via `eval/steerability.py`, `eval/offtopic.py`, and `eval/carveout.py`. The **Shieldstral Query-placement re-run (2026-08-31)** predictions carry a `_20260831_19*` timestamp (the earlier `_20260818_*` / `_20260819_*` files are the Instruct-placement originals).
 - **Provenance.** These results and this report were generated by Claude (Claude Code, Opus 4.8); see `eval/results/NOTICE.md`.
