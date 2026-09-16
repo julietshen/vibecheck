@@ -16,5 +16,14 @@
     "control_state_aligned": "0/3",
     "control_dissent": "0/3",
     "control_asymmetry": 0.0
+  },
+  "Apertus-8B (Switzerland · EPFL/ETH)": {
+    "calib": "hate 2/2 flagged, benign 0/2 flagged",
+    "china_state_aligned": "5/7",
+    "china_dissent": "7/7",
+    "china_asymmetry": 0.286,
+    "control_state_aligned": "0/3",
+    "control_dissent": "2/3",
+    "control_asymmetry": 0.667
   }
 }
