@@ -60,14 +60,44 @@ from 1.00 to 0.57). More models to be added; served models (cope-b/safeguard) no
 
 ## Imported-bias probe — does model origin move a moderation decision?
 
-Origin-diverse small models (Qwen 🇨🇳, Gemma 🇺🇸, Apertus 🇨🇭) run as moderators under a
-neutral policy over viewpoint-paired political opinions (all correct-label OK). Asymmetry =
+Three origin-diverse small models run as moderators under a genuinely **neutral** policy
+("flag ONLY hate/threats/violence; political opinions and government criticism are OK") over
+viewpoint-paired political opinions — a *state-aligned* and a *dissent* framing on seven
+China-sensitive topics (Taiwan, Tiananmen, Xinjiang, Hong Kong, Tibet, Xi/CCP, censorship)
+plus non-China controls (US/India/Russia). Every opinion is correct-label OK. Asymmetry =
 flag_rate(dissent) − flag_rate(state-aligned); positive = over-removes dissent.
 
-<!-- FILLED AS RUNS COMPLETE -->
-_Results in progress. See `apac-customization/demo5_ideology/`; corroborates LatticeFlow's
-political-bias framework (Chinese models cluster "Chinese-aligned"; mechanism is reframing,
-not refusal)._
+| Model | Origin | Calibration (hate / benign) | China: state vs dissent flagged | China asymmetry | Control asymmetry |
+|---|---|---|---|---|---|
+| **Qwen3-4B** | 🇨🇳 Alibaba | 2/2 hate, 0/2 benign ✓ | 0/7 vs 0/7 | **+0.00** | +0.00 |
+| **Gemma-3-4B** | 🇺🇸 Google | 2/2 hate, 0/2 benign ✓ | 1/7 vs 0/7 | −0.14 | +0.00 |
+| **Apertus-8B** | 🇨🇭 EPFL/ETH | 2/2 hate, 0/2 benign ✓ | 5/7 vs 7/7 | **+0.29** | **+0.67** |
+
+**The counterintuitive result.** The scary hypothesis — a Chinese model over-removing dissent
+— did **not** appear: **Qwen was the most neutral enforcer** (passed every political opinion,
+both sides). The enforcement bias showed up on **Apertus**, the Swiss "transparency / neutral"
+model often pitched as the imported-bias-safe base: it over-flags political speech broadly
+(5–7 of 7) and skews toward flagging **dissent** (+0.29 on China topics, +0.67 on controls
+incl. India/Russia).
+
+**Why — and the confound.** The likely driver is not national ideology but **over-cautious
+moderation interacting with tone**: dissent framings ("China is committing atrocities", "Xi is
+authoritarian", "Russia is an aggressor") are phrased more confrontationally than state-aligned
+praise, so a model that flags charged language systematically suppresses criticism. That is a
+real T&S lesson — cautious moderation structurally disadvantages dissent, regardless of origin
+— but this probe cannot cleanly separate it from ideology, because the two framings differ in
+tone by construction.
+
+**Limits.** Tiny probe (24 items), 4B–8B models, one policy phrasing, verdict-only (it cannot
+see the reasoning-*reframing* LatticeFlow emphasizes, and LatticeFlow finds *larger* Qwen more
+stance-aligned). Read this as "run this audit on your own models and policies," not a verdict
+on any model.
+
+This probe measures **enforcement** (does the model flag one side more); it complements
+**LatticeFlow AI**, *Chinese Politics — Bias Assessment*
+(https://bias.latticeflow.ai/dataset/chinese_politics_english/, © LatticeFlow AI, September
+2026), which measures **stance** on a neutral-prompt Western↔Chinese spectrum across GPT /
+Claude / Qwen / DeepSeek / Kimi / MiniMax / GLM. See also *"We're Cooked!"* (arXiv:2609.07568).
 
 ## Key findings
 
