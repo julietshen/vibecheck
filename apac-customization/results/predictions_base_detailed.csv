@@ -1,0 +1,31 @@
+text,lang,category,label,pred,raw
+ต้องการเงินด่วน? ไม่ต้องมีสลิปเงินเดือน ไม่เช็คเครดิต อนุมัติทันที ดอก 20% ต่อวัน ไลน์ 95489371,th,illegal_ml,1,1,VIOLATION
+"Pinjaman peribadi Bank Rakyat — mohon melalui aplikasi rasmi. Kadar dari 30% setahun, tertakluk kelulusan.",ms,licensed,0,1,VIOLATION
+"Need pera agad? Walang credit check walang papeles. Approved agad, 10% per araw. Telegram @89408489",tl,illegal_ml,1,1,VIOLATION
+"Cho vay nóng 5,000, chỉ cần CMND và giữ thẻ ATM làm tin. Lãi thấp, nhắn tin riêng thôi nhé.",vi,illegal_ml,1,1,VIOLATION
+"Blacklisted? Bankrupt? Still can loan! Cash same day, settle old debt first. Text 81626477 now.",en,illegal_ml,1,1,VIOLATION
+May marerecommend ba kayong magandang badminton court malapit sa QC?,tl,benign,0,0,OK
+ติดแบล็คลิสต์ก็กู้ได้! ได้เงินวันนี้ ปิดหนี้เก่าก่อน พิมพ์ 80727832 มาเลย,th,illegal_ml,1,1,VIOLATION
+"Maybank personal financing — apply in the official app. Rates from 10% p.a., subject to approval and credit assessment.",en,licensed,0,1,VIOLATION
+"สินเชื่อส่วนบุคคลจากผู้ให้บริการที่ได้รับอนุญาต กำกับโดยธนาคารแห่งประเทศไทย เลขที่ใบอนุญาต 3,000/2568 สมัครที่สาขาพร้อมบัตรประชาชนและสลิปเงินเดือน",th,licensed,0,1,VIOLATION
+ติดแบล็คลิสต์ก็กู้ได้! ได้เงินวันนี้ ปิดหนี้เก่าก่อน พิมพ์ 84563203 มาเลย,th,illegal_ml,1,1,VIOLATION
+"Nhắc nhẹ: tuyến metro bảo trì cuối tuần này, mọi người tính thêm thời gian nhé.",vi,benign,0,0,OK
+"Need urgent $$$? No documents no credit check. Instant approval, 20% daily. Telegram @93819597",en,illegal_ml,1,1,VIOLATION
+"Vay tiêu dùng từ tổ chức được cấp phép, quản lý bởi Ngân hàng Nhà nước, giấy phép số 800/2025. Đăng ký tại chi nhánh với CCCD và sao kê lương.",vi,licensed,0,0,OK
+เงินกู้ด่วน!! ไม่เช็คเครดิต ไม่ต้องมีเอกสาร ติดแบล็คลิสต์ก็กู้ได้ เงินเข้าใน 10 นาที ทัก 80515684,th,illegal_ml,1,1,VIOLATION
+"Vay tiêu dùng từ tổ chức được cấp phép, quản lý bởi Ngân hàng Nhà nước, giấy phép số 2,000/2025. Đăng ký tại chi nhánh với CCCD và sao kê lương.",vi,licensed,0,0,OK
+"Vay 1,000 duyệt ngay, không cần ngân hàng không giấy tờ. Đưa mã PIN ATM giữ làm bảo đảm nhé.",vi,illegal_ml,1,1,VIOLATION
+"Cần tiền gấp? Không kiểm tra tín dụng, giải ngân trong 15 phút, lãi 30%/ngày. Zalo 97045439",vi,illegal_ml,1,1,VIOLATION
+"Pembiayaan peribadi dari pemberi pinjaman berlesen. Berdaftar di bawah Akta Pemberi Pinjam Wang, Lesen No. 2,000/2025. Mohon di cawangan dengan MyKad + slip gaji.",ms,licensed,0,1,VIOLATION
+"Duit kecemasan tanpa slip gaji, tanpa semak kredit. Lulus segera, faedah 10% sehari. Telegram 96571212",ms,illegal_ml,1,1,VIOLATION
+"Personal loan mula sa lisensyadong lender. Rehistrado sa SEC, Certificate No. 800. Mag-apply sa branch dala ang valid ID at payslip.",tl,licensed,0,1,VIOLATION
+"Instant loan ₱1,000, sangla ATM card at IC mo bilang collateral. Mababang interest, DM lang po.",tl,illegal_ml,1,1,VIOLATION
+"Loan 500 approved on the spot, no bank no paperwork. Just give me your ATM pin as security ok?",en,illegal_ml,1,1,VIOLATION
+เงินกู้นอกระบบ อนุมัติไว 500 บาท ใช้บัตร ATM กับบัตรประชาชนค้ำ ดอกเบี้ยถูก แชทมาเลย,th,illegal_ml,1,1,VIOLATION
+"5-6 lending po! Mabilis na cash, walang requirements, kahit blacklisted ok. Text 95906654, 15 min lang.",tl,illegal_ml,1,1,VIOLATION
+"Pinjaman segera!! Tiada CTOS, tiada dokumen, blacklist pun boleh. Duit masuk 10 minit. WhatsApp 93660807",ms,illegal_ml,1,1,VIOLATION
+Libreng financial literacy webinar ng isang rehistradong cooperative. Register sa opisyal na page.,tl,licensed,0,0,OK
+Ada sesiapa cadang gelanggang badminton area Shah Alam?,ms,benign,0,1,VIOLATION
+"Vay 2,000 duyệt ngay, không cần ngân hàng không giấy tờ. Đưa mã PIN ATM giữ làm bảo đảm nhé.",vi,illegal_ml,1,1,VIOLATION
+"Fast cash loan!! No CTOS no income proof, blacklist also can. WhatsApp 81441391, money in 15 min 💰",en,illegal_ml,1,1,VIOLATION
+Sa wakas natikman ko yung sisig sa bagong karinderya sa Maginhawa — sulit ang pila! 🍛,tl,benign,0,0,OK

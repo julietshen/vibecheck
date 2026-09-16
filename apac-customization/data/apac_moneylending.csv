@@ -1,0 +1,121 @@
+text,label,lang,category,split
+ต้องการเงินด่วน? ไม่ต้องมีสลิปเงินเดือน ไม่เช็คเครดิต อนุมัติทันที ดอก 20% ต่อวัน ไลน์ 95489371,1,th,illegal_ml,test
+"Along boss di sini. Loan RM5,000 cepat lulus, cukup IC dan kad ATM sebagai cagaran. Faedah rendah.",1,ms,illegal_ml,valid
+"Need urgent $$$? No documents no credit check. Instant approval, 20% daily. Telegram @98137262",1,en,illegal_ml,train
+"Personal loan from a licensed lender. Reg. under the Moneylenders Act, Lic. No. 5,000/2025. Apply at our branch with NRIC + payslip.",0,en,licensed,train
+"Pinjaman peribadi Bank Rakyat — mohon melalui aplikasi rasmi. Kadar dari 30% setahun, tertakluk kelulusan.",0,ms,licensed,test
+"Pembiayaan peribadi dari pemberi pinjaman berlesen. Berdaftar di bawah Akta Pemberi Pinjam Wang, Lesen No. 500/2025. Mohon di cawangan dengan MyKad + slip gaji.",0,ms,licensed,train
+ในที่สุดก็ได้ลองข้าวมันไก่ร้านใหม่แถวอารีย์ อร่อยมากกกก 🍗,0,th,benign,train
+"Ah long here bro. $5,000 today, keep your IC + ATM card as guarantee. Low low interest, DM only.",1,en,illegal_ml,train
+"Need pera agad? Walang credit check walang papeles. Approved agad, 10% per araw. Telegram @89408489",1,tl,illegal_ml,test
+"Duit kecemasan tanpa slip gaji, tanpa semak kredit. Lulus segera, faedah 10% sehari. Telegram 91431984",1,ms,illegal_ml,valid
+กู้ 800 บาทอนุมัติทันที ไม่ต้องผ่านธนาคาร แค่ให้รหัส ATM ไว้เป็นประกัน ทักแชทเลย,1,th,illegal_ml,train
+"Vay tiêu dùng Vietcombank — đăng ký qua ứng dụng chính thức. Lãi suất từ 20%/năm, tùy theo thẩm định.",0,vi,licensed,train
+"Cho vay nóng 5,000, chỉ cần CMND và giữ thẻ ATM làm tin. Lãi thấp, nhắn tin riêng thôi nhé.",1,vi,illegal_ml,test
+"Vay tiền nhanh!! Không cần thế chấp, không cần chứng minh thu nhập, nợ xấu vẫn vay được. Nhắn 96426935",1,vi,illegal_ml,train
+ต้องการเงินด่วน? ไม่ต้องมีสลิปเงินเดือน ไม่เช็คเครดิต อนุมัติทันที ดอก 20% ต่อวัน ไลน์ 92106337,1,th,illegal_ml,train
+"5-6 lending po! Mabilis na cash, walang requirements, kahit blacklisted ok. Text 80851455, 15 min lang.",1,tl,illegal_ml,train
+"Blacklisted? Bankrupt? Still can loan! Cash same day, settle old debt first. Text 81626477 now.",1,en,illegal_ml,test
+"สินเชื่อส่วนบุคคลจากผู้ให้บริการที่ได้รับอนุญาต กำกับโดยธนาคารแห่งประเทศไทย เลขที่ใบอนุญาต 1,000/2568 สมัครที่สาขาพร้อมบัตรประชาชนและสลิปเงินเดือน",0,th,licensed,valid
+บริการให้คำปรึกษาหนี้โดยหน่วยงานที่จดทะเบียน ปรึกษาฟรี มีเงื่อนไข,0,th,licensed,train
+"สินเชื่อส่วนบุคคลจากผู้ให้บริการที่ได้รับอนุญาต กำกับโดยธนาคารแห่งประเทศไทย เลขที่ใบอนุญาต 2,000/2568 สมัครที่สาขาพร้อมบัตรประชาชนและสลิปเงินเดือน",0,th,licensed,train
+May marerecommend ba kayong magandang badminton court malapit sa QC?,0,tl,benign,test
+"Pembiayaan peribadi dari pemberi pinjaman berlesen. Berdaftar di bawah Akta Pemberi Pinjam Wang, Lesen No. 3,000/2025. Mohon di cawangan dengan MyKad + slip gaji.",0,ms,licensed,train
+แจ้งเตือน: รถไฟฟ้าสายสีเขียวปิดซ่อมบำรุงสุดสัปดาห์นี้ เผื่อเวลาเดินทางด้วยนะ,0,th,benign,train
+"Maybank personal financing — apply in the official app. Rates from 20% p.a., subject to approval and credit assessment.",0,en,licensed,train
+ติดแบล็คลิสต์ก็กู้ได้! ได้เงินวันนี้ ปิดหนี้เก่าก่อน พิมพ์ 80727832 มาเลย,1,th,illegal_ml,test
+Hội thảo miễn phí về quản lý tài chính do một hợp tác xã đã đăng ký tổ chức. Đăng ký tại trang chính thức.,0,vi,licensed,valid
+"Cho vay nóng 1,000, chỉ cần CMND và giữ thẻ ATM làm tin. Lãi thấp, nhắn tin riêng thôi nhé.",1,vi,illegal_ml,train
+"กู้ 3,000 บาทอนุมัติทันที ไม่ต้องผ่านธนาคาร แค่ให้รหัส ATM ไว้เป็นประกัน ทักแชทเลย",1,th,illegal_ml,train
+"Maybank personal financing — apply in the official app. Rates from 10% p.a., subject to approval and credit assessment.",0,en,licensed,test
+"Blacklisted? Bankrupt? Still can loan! Cash same day, settle old debt first. Text 97762902 now.",1,en,illegal_ml,train
+"Maybank personal financing — apply in the official app. Rates from 15% p.a., subject to approval and credit assessment.",0,en,licensed,train
+Anyone got recommendations for a good badminton court near Jurong?,0,en,benign,train
+"สินเชื่อส่วนบุคคลจากผู้ให้บริการที่ได้รับอนุญาต กำกับโดยธนาคารแห่งประเทศไทย เลขที่ใบอนุญาต 3,000/2568 สมัครที่สาขาพร้อมบัตรประชาชนและสลิปเงินเดือน",0,th,licensed,test
+"Personal loan mula sa lisensyadong lender. Rehistrado sa SEC, Certificate No. 2,000. Mag-apply sa branch dala ang valid ID at payslip.",0,tl,licensed,valid
+"Cần tiền gấp? Không kiểm tra tín dụng, giải ngân trong 15 phút, lãi 10%/ngày. Zalo 83861103",1,vi,illegal_ml,train
+"Loan ₱2,000 approved on the spot, walang bank walang requirements. Ibigay pin ng ATM as security.",1,tl,illegal_ml,train
+ติดแบล็คลิสต์ก็กู้ได้! ได้เงินวันนี้ ปิดหนี้เก่าก่อน พิมพ์ 84563203 มาเลย,1,th,illegal_ml,test
+"Nợ xấu, nợ chú ý vẫn vay! Tiền trong ngày, trả nợ cũ trước. Nhắn 88697727 ngay.",1,vi,illegal_ml,train
+"Ah long here bro. $800 today, keep your IC + ATM card as guarantee. Low low interest, DM only.",1,en,illegal_ml,train
+"Blacklisted? Bankrupt? Pwede pa rin umutang! Cash today, bayaran muna luma. Text 80081700 ngayon.",1,tl,illegal_ml,train
+"Nhắc nhẹ: tuyến metro bảo trì cuối tuần này, mọi người tính thêm thời gian nhé.",0,vi,benign,test
+"Loan 2,000 approved on the spot, no bank no paperwork. Just give me your ATM pin as security ok?",1,en,illegal_ml,valid
+มีใครแนะนำสนามแบดมินตันแถวลาดพร้าวไหมครับ,0,th,benign,train
+"Vay tiền nhanh!! Không cần thế chấp, không cần chứng minh thu nhập, nợ xấu vẫn vay được. Nhắn 84214442",1,vi,illegal_ml,train
+"Need urgent $$$? No documents no credit check. Instant approval, 20% daily. Telegram @93819597",1,en,illegal_ml,test
+"Loan mudah RM500, tak payah bank tak payah borang. Serah kad ATM & pin sahaja. DM sekarang.",1,ms,illegal_ml,train
+"Need pera agad? Walang credit check walang papeles. Approved agad, 15% per araw. Telegram @93258272",1,tl,illegal_ml,train
+เงินกู้ด่วน!! ไม่เช็คเครดิต ไม่ต้องมีเอกสาร ติดแบล็คลิสต์ก็กู้ได้ เงินเข้าใน 10 นาที ทัก 83259496,1,th,illegal_ml,train
+"Vay tiêu dùng từ tổ chức được cấp phép, quản lý bởi Ngân hàng Nhà nước, giấy phép số 800/2025. Đăng ký tại chi nhánh với CCCD và sao kê lương.",0,vi,licensed,test
+"Blacklisted? Bankrupt? Pwede pa rin umutang! Cash today, bayaran muna luma. Text 85667095 ngayon.",1,tl,illegal_ml,valid
+Finally tried the laksa at that new stall in Tiong Bahru — worth the queue 🍜,0,en,benign,train
+Credit counselling & debt restructuring by a registered non-profit. Free consultation. Terms apply.,0,en,licensed,train
+เงินกู้ด่วน!! ไม่เช็คเครดิต ไม่ต้องมีเอกสาร ติดแบล็คลิสต์ก็กู้ได้ เงินเข้าใน 10 นาที ทัก 80515684,1,th,illegal_ml,test
+"Paalala: may maintenance ang MRT ngayong weekend, mag-allot ng dagdag na oras.",0,tl,benign,train
+"Nợ xấu, nợ chú ý vẫn vay! Tiền trong ngày, trả nợ cũ trước. Nhắn 97700025 ngay.",1,vi,illegal_ml,train
+"Ah long here bro. $2,000 today, keep your IC + ATM card as guarantee. Low low interest, DM only.",1,en,illegal_ml,train
+"Vay tiêu dùng từ tổ chức được cấp phép, quản lý bởi Ngân hàng Nhà nước, giấy phép số 2,000/2025. Đăng ký tại chi nhánh với CCCD và sao kê lương.",0,vi,licensed,test
+สินเชื่อธนาคารกสิกรไทย สมัครผ่านแอปทางการ ดอกเบี้ยตั้งแต่ 10% ต่อปี ขึ้นอยู่กับการพิจารณา,0,th,licensed,valid
+"Fast cash loan!! No CTOS no income proof, blacklist also can. WhatsApp 92399336, money in 15 min 💰",1,en,illegal_ml,train
+"Along boss di sini. Loan RM500 cepat lulus, cukup IC dan kad ATM sebagai cagaran. Faedah rendah.",1,ms,illegal_ml,train
+"Vay 1,000 duyệt ngay, không cần ngân hàng không giấy tờ. Đưa mã PIN ATM giữ làm bảo đảm nhé.",1,vi,illegal_ml,test
+"Fast cash loan!! No CTOS no income proof, blacklist also can. WhatsApp 85340965, money in 15 min 💰",1,en,illegal_ml,train
+"Loan ₱500 approved on the spot, walang bank walang requirements. Ibigay pin ng ATM as security.",1,tl,illegal_ml,train
+"CTOS teruk pun boleh pinjam! Cash hari ini, settle hutang lama dulu. Taip 92907502 sekarang.",1,ms,illegal_ml,train
+"Cần tiền gấp? Không kiểm tra tín dụng, giải ngân trong 15 phút, lãi 30%/ngày. Zalo 97045439",1,vi,illegal_ml,test
+"5-6 lending po! Mabilis na cash, walang requirements, kahit blacklisted ok. Text 89341118, 15 min lang.",1,tl,illegal_ml,valid
+"CTOS teruk pun boleh pinjam! Cash hari ini, settle hutang lama dulu. Taip 94670211 sekarang.",1,ms,illegal_ml,train
+"Vay 5,000 duyệt ngay, không cần ngân hàng không giấy tờ. Đưa mã PIN ATM giữ làm bảo đảm nhé.",1,vi,illegal_ml,train
+"Pembiayaan peribadi dari pemberi pinjaman berlesen. Berdaftar di bawah Akta Pemberi Pinjam Wang, Lesen No. 2,000/2025. Mohon di cawangan dengan MyKad + slip gaji.",0,ms,licensed,test
+Akhirnya cuba nasi lemak kaw kaw kat kedai baru tu — memang sedap gila 🍚,0,ms,benign,train
+Có ai gợi ý sân cầu lông gần Thủ Đức không ạ?,0,vi,benign,train
+"Pinjaman peribadi Bank Rakyat — mohon melalui aplikasi rasmi. Kadar dari 20% setahun, tertakluk kelulusan.",0,ms,licensed,train
+"Duit kecemasan tanpa slip gaji, tanpa semak kredit. Lulus segera, faedah 10% sehari. Telegram 96571212",1,ms,illegal_ml,test
+"เงินกู้นอกระบบ อนุมัติไว 3,000 บาท ใช้บัตร ATM กับบัตรประชาชนค้ำ ดอกเบี้ยถูก แชทมาเลย",1,th,illegal_ml,valid
+"Blacklisted? Bankrupt? Still can loan! Cash same day, settle old debt first. Text 86374138 now.",1,en,illegal_ml,train
+"เงินกู้นอกระบบ อนุมัติไว 5,000 บาท ใช้บัตร ATM กับบัตรประชาชนค้ำ ดอกเบี้ยถูก แชทมาเลย",1,th,illegal_ml,train
+"Personal loan mula sa lisensyadong lender. Rehistrado sa SEC, Certificate No. 800. Mag-apply sa branch dala ang valid ID at payslip.",0,tl,licensed,test
+Khidmat nasihat kredit oleh AKPK (agensi berdaftar). Rundingan percuma. Terma dikenakan.,0,ms,licensed,train
+"Vay tiêu dùng từ tổ chức được cấp phép, quản lý bởi Ngân hàng Nhà nước, giấy phép số 500/2025. Đăng ký tại chi nhánh với CCCD và sao kê lương.",0,vi,licensed,train
+เงินกู้ด่วน!! ไม่เช็คเครดิต ไม่ต้องมีเอกสาร ติดแบล็คลิสต์ก็กู้ได้ เงินเข้าใน 10 นาที ทัก 88158192,1,th,illegal_ml,train
+"Instant loan ₱1,000, sangla ATM card at IC mo bilang collateral. Mababang interest, DM lang po.",1,tl,illegal_ml,test
+"Duit kecemasan tanpa slip gaji, tanpa semak kredit. Lulus segera, faedah 10% sehari. Telegram 98704302",1,ms,illegal_ml,valid
+"Nợ xấu, nợ chú ý vẫn vay! Tiền trong ngày, trả nợ cũ trước. Nhắn 89493951 ngay.",1,vi,illegal_ml,train
+"Personal loan mula sa lisensyadong lender. Rehistrado sa SEC, Certificate No. 3,000. Mag-apply sa branch dala ang valid ID at payslip.",0,tl,licensed,train
+"Loan 500 approved on the spot, no bank no paperwork. Just give me your ATM pin as security ok?",1,en,illegal_ml,test
+"Pinjaman segera!! Tiada CTOS, tiada dokumen, blacklist pun boleh. Duit masuk 10 minit. WhatsApp 94997656",1,ms,illegal_ml,train
+Cuối cùng cũng thử bún bò ở quán mới ngoài quận 1 — ngon xứng đáng xếp hàng 🍜,0,vi,benign,train
+สินเชื่อธนาคารกสิกรไทย สมัครผ่านแอปทางการ ดอกเบี้ยตั้งแต่ 20% ต่อปี ขึ้นอยู่กับการพิจารณา,0,th,licensed,train
+เงินกู้นอกระบบ อนุมัติไว 500 บาท ใช้บัตร ATM กับบัตรประชาชนค้ำ ดอกเบี้ยถูก แชทมาเลย,1,th,illegal_ml,test
+สินเชื่อธนาคารกสิกรไทย สมัครผ่านแอปทางการ ดอกเบี้ยตั้งแต่ 30% ต่อปี ขึ้นอยู่กับการพิจารณา,0,th,licensed,valid
+"Loan 3,000 approved on the spot, no bank no paperwork. Just give me your ATM pin as security ok?",1,en,illegal_ml,train
+"Vay tiền nhanh!! Không cần thế chấp, không cần chứng minh thu nhập, nợ xấu vẫn vay được. Nhắn 87929834",1,vi,illegal_ml,train
+"5-6 lending po! Mabilis na cash, walang requirements, kahit blacklisted ok. Text 95906654, 15 min lang.",1,tl,illegal_ml,test
+"Instant loan ₱800, sangla ATM card at IC mo bilang collateral. Mababang interest, DM lang po.",1,tl,illegal_ml,train
+Peringatan: jalan tol PLUS akan ada kerja penyelenggaraan hujung minggu ini.,0,ms,benign,train
+"Instant loan ₱500, sangla ATM card at IC mo bilang collateral. Mababang interest, DM lang po.",1,tl,illegal_ml,train
+"Pinjaman segera!! Tiada CTOS, tiada dokumen, blacklist pun boleh. Duit masuk 10 minit. WhatsApp 93660807",1,ms,illegal_ml,test
+"Blacklisted? Bankrupt? Pwede pa rin umutang! Cash today, bayaran muna luma. Text 98086491 ngayon.",1,tl,illegal_ml,valid
+"Loan mudah RM2,000, tak payah bank tak payah borang. Serah kad ATM & pin sahaja. DM sekarang.",1,ms,illegal_ml,train
+"CTOS teruk pun boleh pinjam! Cash hari ini, settle hutang lama dulu. Taip 98260213 sekarang.",1,ms,illegal_ml,train
+Libreng financial literacy webinar ng isang rehistradong cooperative. Register sa opisyal na page.,0,tl,licensed,test
+"Cho vay nóng 3,000, chỉ cần CMND và giữ thẻ ATM làm tin. Lãi thấp, nhắn tin riêng thôi nhé.",1,vi,illegal_ml,train
+ต้องการเงินด่วน? ไม่ต้องมีสลิปเงินเดือน ไม่เช็คเครดิต อนุมัติทันที ดอก 10% ต่อวัน ไลน์ 80307377,1,th,illegal_ml,train
+"Loan ₱5,000 approved on the spot, walang bank walang requirements. Ibigay pin ng ATM as security.",1,tl,illegal_ml,train
+Ada sesiapa cadang gelanggang badminton area Shah Alam?,0,ms,benign,test
+"Reminder: MRT maintenance this weekend on the East-West line, plan extra time.",0,en,benign,valid
+"Need urgent $$$? No documents no credit check. Instant approval, 20% daily. Telegram @85807490",1,en,illegal_ml,train
+"BPI personal loan — mag-apply sa opisyal na app. Rates mula 15% per annum, subject sa credit assessment.",0,tl,licensed,train
+"Vay 2,000 duyệt ngay, không cần ngân hàng không giấy tờ. Đưa mã PIN ATM giữ làm bảo đảm nhé.",1,vi,illegal_ml,test
+"Vay tiêu dùng Vietcombank — đăng ký qua ứng dụng chính thức. Lãi suất từ 10%/năm, tùy theo thẩm định.",0,vi,licensed,train
+"Pinjaman peribadi Bank Rakyat — mohon melalui aplikasi rasmi. Kadar dari 10% setahun, tertakluk kelulusan.",0,ms,licensed,train
+ติดแบล็คลิสต์ก็กู้ได้! ได้เงินวันนี้ ปิดหนี้เก่าก่อน พิมพ์ 99281544 มาเลย,1,th,illegal_ml,train
+"Fast cash loan!! No CTOS no income proof, blacklist also can. WhatsApp 81441391, money in 15 min 💰",1,en,illegal_ml,test
+กู้ 500 บาทอนุมัติทันที ไม่ต้องผ่านธนาคาร แค่ให้รหัส ATM ไว้เป็นประกัน ทักแชทเลย,1,th,illegal_ml,valid
+"Along boss di sini. Loan RM1,000 cepat lulus, cukup IC dan kad ATM sebagai cagaran. Faedah rendah.",1,ms,illegal_ml,train
+"BPI personal loan — mag-apply sa opisyal na app. Rates mula 10% per annum, subject sa credit assessment.",0,tl,licensed,train
+Sa wakas natikman ko yung sisig sa bagong karinderya sa Maginhawa — sulit ang pila! 🍛,0,tl,benign,test
+"Pinjaman segera!! Tiada CTOS, tiada dokumen, blacklist pun boleh. Duit masuk 10 minit. WhatsApp 90883305",1,ms,illegal_ml,train
+"Cần tiền gấp? Không kiểm tra tín dụng, giải ngân trong 15 phút, lãi 15%/ngày. Zalo 80400250",1,vi,illegal_ml,train
+"Need pera agad? Walang credit check walang papeles. Approved agad, 20% per araw. Telegram @97287376",1,tl,illegal_ml,train

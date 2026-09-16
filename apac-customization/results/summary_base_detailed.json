@@ -1,0 +1,23 @@
+{
+  "label": "base_detailed",
+  "model": "mlx-community/Qwen3-1.7B-bf16",
+  "adapter": null,
+  "policy": "detailed",
+  "n": 30,
+  "tp": 18,
+  "fp": 6,
+  "fn": 0,
+  "tn": 6,
+  "unparsed": 0,
+  "precision": 0.75,
+  "recall": 1.0,
+  "f1": 0.857,
+  "illegal_recall_by_lang": {
+    "en": "4/4",
+    "ms": "2/2",
+    "th": "5/5",
+    "tl": "3/3",
+    "vi": "4/4"
+  },
+  "licensed_false_positive": "5/8"
+}

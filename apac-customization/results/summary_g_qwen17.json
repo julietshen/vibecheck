@@ -1,0 +1,22 @@
+{
+  "label": "g_qwen17",
+  "model": "mlx-community/Qwen3-1.7B-bf16",
+  "adapter": null,
+  "policy": "gendered_minimal",
+  "n": 160,
+  "tp": 54,
+  "fp": 37,
+  "fn": 26,
+  "tn": 43,
+  "unparsed": 0,
+  "precision": 0.593,
+  "recall": 0.675,
+  "f1": 0.632,
+  "illegal_recall_by_lang": {
+    "en": "20/20",
+    "hi": "9/20",
+    "ta": "7/20",
+    "zh": "18/20"
+  },
+  "hardneg_false_positive": "37/80"
+}

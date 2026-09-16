@@ -1,0 +1,19 @@
+# LoRA adapters (regenerate via mlx_lm lora)
+rung2_lora/adapters/
+rung2_lora/adapters_chifraud/
+rung2_lora/adapters_bengali/
+# Samples derived from vendored datasets — regenerate from source (see build scripts):
+#   ChiFraud (CC BY-NC 4.0), TB-OLID/HASOC (AGPL-3.0), SWSR + Uli (CC BY 4.0)
+data/chifraud/
+data/bengali/
+data/gendered/
+# Prediction CSVs that embed raw vendored text (aggregate summary_*.json are kept)
+results/predictions_zh_*.csv
+results/predictions_bn_*.csv
+results/predictions_g_*.csv
+# scratch
+__pycache__/
+*.pyc
+
+# Private speaker notes — not for the repo
+PRESENTATION_NOTES.md

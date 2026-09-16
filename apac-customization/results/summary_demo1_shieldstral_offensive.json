@@ -1,0 +1,14 @@
+{
+  "model": "mistralai/Shieldstral-1.0-3B",
+  "domain": "offensive",
+  "n": 360,
+  "langs": [
+    "bn"
+  ],
+  "baseline": {
+    "P": 0.671,
+    "R": 0.272,
+    "F1": 0.387
+  },
+  "release_rate_permit_all": null
+}

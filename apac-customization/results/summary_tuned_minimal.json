@@ -1,0 +1,23 @@
+{
+  "label": "tuned_minimal",
+  "model": "mlx-community/Qwen3-1.7B-bf16",
+  "adapter": "rung2_lora/adapters",
+  "policy": "minimal",
+  "n": 30,
+  "tp": 18,
+  "fp": 0,
+  "fn": 0,
+  "tn": 12,
+  "unparsed": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "illegal_recall_by_lang": {
+    "en": "4/4",
+    "ms": "2/2",
+    "th": "5/5",
+    "tl": "3/3",
+    "vi": "4/4"
+  },
+  "licensed_false_positive": "0/8"
+}

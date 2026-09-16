@@ -1,0 +1,17 @@
+{
+  "model": "mistralai/Shieldstral-1.0-3B",
+  "domain": "gendered",
+  "n": 160,
+  "langs": [
+    "en",
+    "hi",
+    "ta",
+    "zh"
+  ],
+  "baseline": {
+    "P": 0.696,
+    "R": 0.487,
+    "F1": 0.574
+  },
+  "release_rate_permit_all": null
+}

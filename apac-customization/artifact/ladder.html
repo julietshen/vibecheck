@@ -1,0 +1,175 @@
+<title>Open safety models for APAC — where the gaps are</title>
+<style>
+  :root{
+    --paper:#F6F7F9; --card:#FFFFFF; --ink:#151A21; --ink-soft:#4A545F;
+    --indigo:#17475A; --indigo-deep:#0E2E3B; --gold:#B9822B;
+    --line:#E1E5EA; --good:#2E7D5B; --mid:#C8892A; --bad:#BB4636;
+    --display:"Iowan Old Style","Palatino Linotype","Palatino",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sp:clamp(1rem,3vw,2rem);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 var(--sp)}
+  h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance;line-height:1.15}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 .8rem}
+  .mono{font-family:var(--mono)} .tnum{font-variant-numeric:tabular-nums}
+
+  header{background:radial-gradient(120% 120% at 88% -10%,rgba(185,130,43,.14),transparent 46%),linear-gradient(180deg,var(--indigo-deep),var(--indigo));color:#EAF1F3;padding:clamp(3rem,8vw,5.5rem) 0 clamp(2.2rem,6vw,3.6rem)}
+  header .eyebrow{color:#E7C98B}
+  header h1{font-size:clamp(2rem,5.5vw,3.3rem);margin:.2rem 0 1rem;color:#fff}
+  header h1 em{font-style:italic;color:#E7C98B}
+  header p.lede{font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:52ch;color:#CFE0E4;margin:0}
+  .thesis{margin-top:clamp(1.6rem,4vw,2.4rem);padding:1.1rem 1.3rem;border-left:3px solid var(--gold);background:rgba(255,255,255,.06);max-width:64ch;font-size:1.02rem}
+  .thesis b{color:#fff}
+
+  section{padding:clamp(2.4rem,6vw,3.6rem) 0}
+  section h2{font-size:clamp(1.5rem,3.6vw,2.1rem);margin:.2rem 0 .6rem}
+  .sub{color:var(--ink-soft);max-width:64ch;margin:0 0 1.8rem}
+
+  /* matrix */
+  .matrix{display:grid;gap:.9rem}
+  .legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.8rem;color:var(--ink-soft);margin-bottom:.4rem}
+  .legend span{display:inline-flex;align-items:center;gap:.4rem}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:1rem 1.1rem;display:grid;grid-template-columns:1fr;gap:.55rem}
+  .rowhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+  .rowhead h3{font-size:1.05rem;margin:0}
+  .rowhead .tags{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);display:flex;gap:.5rem;flex-wrap:wrap}
+  .pill{padding:.1rem .5rem;border-radius:5px;font-weight:600}
+  .pill.steer{background:rgba(46,125,91,.13);color:var(--good)}
+  .pill.fixed{background:rgba(187,70,54,.1);color:var(--bad)}
+  .pill.cot{background:rgba(185,130,43,.14);color:var(--gold)}
+  .bar{display:grid;grid-template-columns:132px 1fr 44px;align-items:center;gap:.6rem;font-size:.82rem}
+  .bar .lang{font-family:var(--mono);color:var(--ink-soft)}
+  .track{height:14px;background:#EDEFF2;border-radius:7px;overflow:hidden}
+  .fill{height:100%;border-radius:7px}
+  .bar .v{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+  .cliff{color:var(--bad);font-weight:600}
+
+  .finds{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:.5rem}
+  .find{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.1rem 1.2rem}
+  .find .n{font-family:var(--display);font-size:1.6rem;color:var(--gold);line-height:1}
+  .find h3{font-size:1.02rem;margin:.5rem 0 .3rem}
+  .find p{margin:0;font-size:.9rem;color:var(--ink-soft)}
+  .find b{color:var(--ink)}
+
+  .callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--indigo);border-radius:10px;padding:1.1rem 1.3rem;font-size:1.02rem}
+  .callout b{color:var(--ink)}
+
+  footer{background:var(--indigo-deep);color:#B9CAD0;padding:clamp(2.2rem,6vw,3.4rem) 0;font-size:.86rem}
+  footer h2{color:#fff;font-size:1.3rem;margin:0 0 1rem}
+  footer .cols{display:grid;gap:1.6rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  footer h3{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#E7C98B;margin:0 0 .6rem}
+  footer ul{margin:0;padding-left:1.1rem} footer li{margin:.3rem 0}
+  .caveat{margin-top:1.6rem;padding-top:1.1rem;border-top:1px solid rgba(255,255,255,.12);font-size:.8rem;color:#8FA6AD;max-width:74ch}
+  @media(prefers-reduced-motion:no-preference){.fill{animation:g .9s cubic-bezier(.2,.7,.2,1) both}@keyframes g{from{width:0!important}}}
+</style>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">When the policy becomes the classifier · TSPA Singapore 2026</p>
+    <h1>Open safety models for APAC: <em>where the gaps are</em></h1>
+    <p class="lede">Five open models, one harm per language, tested across Southeast Asian languages, Chinese, and romanized Bengali — on one laptop plus two rented GPUs.</p>
+    <div class="thesis">
+      Every open safety model holds up on well-resourced languages and <b>falls off a cliff on romanized, low-resource ones</b>. The model marketed as “multilingual” is the one that collapses hardest. And fine-tuning — the fix everyone reaches for — <b>isn’t guaranteed to work.</b>
+    </div>
+  </div>
+</header>
+
+<section class="wrap">
+  <p class="eyebrow">The measured matrix</p>
+  <h2>Detection F1 by language</h2>
+  <p class="sub">One generic plain-language policy per harm. Same synthetic SEA moneylending set, real Chinese fraud (ChiFraud), real romanized Bengali offensive language (TB-OLID). Bars sorted so the Bengali cliff is visible.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--good)"></i> SEA moneylending (id/ms/th/tl/vi)</span>
+    <span><i class="sw" style="background:var(--mid)"></i> Chinese fraud</span>
+    <span><i class="sw" style="background:var(--bad)"></i> Bengali (romanized) offensive</span>
+  </div>
+  <div class="matrix">
+
+    <div class="row">
+      <div class="rowhead"><h3>Shieldstral-1.0-3B <span class="mono" style="color:var(--ink-soft);font-size:.8rem">· Mistral · local</span></h3>
+        <div class="tags"><span class="pill fixed">fixed (0–1% release)</span></div></div>
+      <div class="bar"><span class="lang">SEA</span><div class="track"><div class="fill" style="width:100%;background:var(--good)"></div></div><span class="v">1.00</span></div>
+      <div class="bar"><span class="lang">Chinese</span><div class="track"><div class="fill" style="width:94.6%;background:var(--mid)"></div></div><span class="v">0.95</span></div>
+      <div class="bar"><span class="lang">Bengali</span><div class="track"><div class="fill" style="width:38.7%;background:var(--bad)"></div></div><span class="v cliff">0.39</span></div>
+    </div>
+
+    <div class="row">
+      <div class="rowhead"><h3>cope-b-a4b <span class="mono" style="color:var(--ink-soft);font-size:.8rem">· Zentropi · H100</span></h3>
+        <div class="tags"><span class="pill steer">steerable (100% release)</span></div></div>
+      <div class="bar"><span class="lang">SEA</span><div class="track"><div class="fill" style="width:100%;background:var(--good)"></div></div><span class="v">1.00</span></div>
+      <div class="bar"><span class="lang">Chinese</span><div class="track"><div class="fill" style="width:85.2%;background:var(--mid)"></div></div><span class="v">0.85</span></div>
+      <div class="bar"><span class="lang">Bengali</span><div class="track"><div class="fill" style="width:75.2%;background:var(--bad)"></div></div><span class="v">0.75</span></div>
+    </div>
+
+    <div class="row">
+      <div class="rowhead"><h3>gpt-oss-safeguard-20b <span class="mono" style="color:var(--ink-soft);font-size:.8rem">· OpenAI · H100</span></h3>
+        <div class="tags"><span class="pill steer">steerable (100%)</span><span class="pill cot">reasons in-language</span></div></div>
+      <div class="bar"><span class="lang">SEA</span><div class="track"><div class="fill" style="width:100%;background:var(--good)"></div></div><span class="v">1.00</span></div>
+      <div class="bar"><span class="lang">Chinese</span><div class="track"><div class="fill" style="width:76.9%;background:var(--mid)"></div></div><span class="v">0.77</span></div>
+      <div class="bar"><span class="lang">Bengali</span><div class="track"><div class="fill" style="width:65.3%;background:var(--bad)"></div></div><span class="v">0.65</span></div>
+    </div>
+
+    <div class="row">
+      <div class="rowhead"><h3>Qwen3-1.7B <span class="mono" style="color:var(--ink-soft);font-size:.8rem">· generic base · local</span></h3></div>
+      <div class="bar"><span class="lang">SEA</span><div class="track"><div class="fill" style="width:85.7%;background:var(--good)"></div></div><span class="v">0.86</span></div>
+      <div class="bar"><span class="lang">Chinese</span><div class="track"><div class="fill" style="width:76.9%;background:var(--mid)"></div></div><span class="v">0.77</span></div>
+      <div class="bar"><span class="lang">Bengali</span><div class="track"><div class="fill" style="width:64.3%;background:var(--bad)"></div></div><span class="v">0.64</span></div>
+    </div>
+
+    <div class="row" style="border-color:var(--gold)">
+      <div class="rowhead"><h3>Qwen3-1.7B + LoRA <span class="mono" style="color:var(--ink-soft);font-size:.8rem">· fine-tuned · local</span></h3>
+        <div class="tags"><span class="pill cot">~90s on a Mac</span></div></div>
+      <div class="bar"><span class="lang">SEA</span><div class="track"><div class="fill" style="width:100%;background:var(--good)"></div></div><span class="v">1.00</span></div>
+      <div class="bar"><span class="lang">Chinese</span><div class="track"><div class="fill" style="width:88%;background:var(--mid)"></div></div><span class="v">0.88</span></div>
+      <div class="bar"><span class="lang">Bengali</span><div class="track"><div class="fill" style="width:30.8%;background:var(--bad)"></div></div><span class="v cliff">0.31</span></div>
+    </div>
+
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <p class="eyebrow">What the data actually says</p>
+  <h2>Three findings — one of them revised my own hypothesis</h2>
+  <div class="finds">
+    <div class="find"><div class="n">1</div><h3>The gap is the language, not the model type</h3>
+      <p>I guessed steerable models couldn’t read Asian languages. Wrong: <b>cope-b is 100% steerable AND the best multilingual all-rounder</b>. The robust failure is <b>romanized, low-resource Bengali</b> — where every model drops.</p></div>
+    <div class="find"><div class="n">2</div><h3>“Multilingual” is not uniform</h3>
+      <p>Shieldstral — the model sold as multilingual — is best on SEA (1.00) and Chinese (0.95) yet <b>worst on romanized Bengali (0.39)</b>. Code-mixed romanized script is out of its distribution. Test the <b>exact</b> languages you serve.</p></div>
+    <div class="find"><div class="n">3</div><h3>Fine-tuning is not magic</h3>
+      <p>LoRA fixed the objective harm (moneylending SEA 0.86→1.00, Chinese 0.77→0.88) but <b>made Bengali offensive worse (0.64→0.31)</b>: 270 examples taught a small model to under-flag. Subjective harm × hardest language needs <b>data</b>, not a quick adapter.</p></div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:0">
+  <div class="callout">
+    <b>The takeaway for a T&amp;S team.</b> No single open model is steerable + multilingual + auditable + cheap — you compose them, and you <b>measure on your own languages</b>. The romanized / low-resource cliff falls hardest on exactly the languages under-represented in the tooling’s training — which is why APAC practitioners contributing regional eval sets and labels to the <span class="mono">RMC</span> is infrastructure, not charity.
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>What ran, and the fine print</h2>
+    <div class="cols">
+      <div><h3>Models</h3><ul>
+        <li>Shieldstral-3B, Qwen3-1.7B (+LoRA) — <b>local, MLX, Apple-silicon</b></li>
+        <li>cope-b-a4b, gpt-oss-safeguard-20b — Modal H100</li>
+        <li>Base to own &amp; adapt: <b>Qwen</b> (SEA-Guard / Qwen3Guard build on it). Kimi / MiniMax are rent-by-prompt only.</li>
+      </ul></div>
+      <div><h3>Data</h3><ul>
+        <li>SEA moneylending — synthetic, native-speaker validation needed</li>
+        <li>Chinese — ChiFraud (CC BY-NC 4.0)</li>
+        <li>Bengali — TB-OLID / HASOC (AGPL-3.0), romanized/code-mixed</li>
+      </ul></div>
+      <div><h3>Method</h3><ul>
+        <li>F1 under one generic policy; steerability = release under a permissive policy</li>
+        <li>LoRA: rank 16, 8 layers, ~300 examples</li>
+        <li>All numbers reproduce from the repo’s runners</li>
+      </ul></div>
+    </div>
+    <p class="caveat">Small, single-labeler samples — directional, not definitive; the synthetic set demonstrates mechanics, not real-world accuracy, and its non-English text needs native-speaker review. Generated by Claude (Claude Code, Opus 4.8) with Juliet Shen, ROOST · 2026-09-16.</p>
+  </div>
+</footer>

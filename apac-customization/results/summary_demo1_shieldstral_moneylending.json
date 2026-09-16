@@ -1,0 +1,14 @@
+{
+  "model": "mistralai/Shieldstral-1.0-3B",
+  "domain": "moneylending",
+  "n": 410,
+  "langs": [
+    "zh"
+  ],
+  "baseline": {
+    "P": 0.951,
+    "R": 0.941,
+    "F1": 0.946
+  },
+  "release_rate_permit_all": 0.0051813471502590676
+}

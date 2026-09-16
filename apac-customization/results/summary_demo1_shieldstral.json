@@ -1,0 +1,23 @@
+{
+  "model": "mistralai/Shieldstral-1.0-3B",
+  "n": 120,
+  "langs": [
+    "en",
+    "ms",
+    "th",
+    "tl",
+    "vi"
+  ],
+  "baseline": {
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0
+  },
+  "flags_by_policy": {
+    "flag_illegal": 74,
+    "permit_all_loans": 74,
+    "flag_all_loans": 74
+  },
+  "n_illegal": 74,
+  "release_rate_permit_all": 0.0
+}

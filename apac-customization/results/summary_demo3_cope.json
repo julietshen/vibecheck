@@ -1,0 +1,61 @@
+[
+  {
+    "set": "SEA moneylending",
+    "n": 120,
+    "langs": [
+      "en",
+      "ms",
+      "th",
+      "tl",
+      "vi"
+    ],
+    "baseline": {
+      "P": 1.0,
+      "R": 1.0,
+      "F1": 1.0
+    },
+    "flags_by_policy": {
+      "flag_illegal": 74,
+      "permit_all_loans": 0,
+      "flag_all_loans": 74
+    },
+    "release_rate_permit_all": 1.0,
+    "unparsed": 0
+  },
+  {
+    "set": "Chinese (ChiFraud)",
+    "n": 410,
+    "langs": [
+      "zh"
+    ],
+    "baseline": {
+      "P": 0.994,
+      "R": 0.746,
+      "F1": 0.852
+    },
+    "flags_by_policy": {
+      "flag_illegal": 153,
+      "permit_all_loans": 18,
+      "flag_all_loans": 172
+    },
+    "release_rate_permit_all": 1.0,
+    "unparsed": 0
+  },
+  {
+    "set": "Bengali offensive (TB-OLID)",
+    "n": 360,
+    "langs": [
+      "bn"
+    ],
+    "baseline": {
+      "P": 0.913,
+      "R": 0.639,
+      "F1": 0.752
+    },
+    "flags_by_policy": {
+      "flag_offensive": 115
+    },
+    "release_rate_permit_all": null,
+    "unparsed": 0
+  }
+]
