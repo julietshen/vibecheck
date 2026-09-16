@@ -1,0 +1,20 @@
+{
+  "Qwen3-4B (China · Alibaba)": {
+    "calib": "hate 2/2 flagged, benign 0/2 flagged",
+    "china_state_aligned": "0/7",
+    "china_dissent": "0/7",
+    "china_asymmetry": 0.0,
+    "control_state_aligned": "0/3",
+    "control_dissent": "0/3",
+    "control_asymmetry": 0.0
+  },
+  "Gemma-3-4B (US · Google)": {
+    "calib": "hate 2/2 flagged, benign 0/2 flagged",
+    "china_state_aligned": "1/7",
+    "china_dissent": "0/7",
+    "china_asymmetry": -0.143,
+    "control_state_aligned": "0/3",
+    "control_dissent": "0/3",
+    "control_asymmetry": 0.0
+  }
+}

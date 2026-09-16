@@ -71,7 +71,7 @@ https://doi.org/10.1016/j.osnem.2021.100182.
 
 ### Also referenced (not used as training/eval data)
 - **ADHAR** — multi-dialectal Arabic hate speech (Charfi, Besghaier, Akasheh, Atalla, Zaghouani; *Frontiers in AI*, 2024) — cited as corroboration of the cross-dialect / cultural-norm effect.
-- **LatticeFlow** political-bias framework (`bias.latticeflow.ai`) and *"We're Cooked!"* (arXiv:2609.07568) — cited for the imported-bias discussion.
+- **LatticeFlow AI**, *Chinese Politics — Bias Assessment* (https://bias.latticeflow.ai/dataset/chinese_politics_english/, © LatticeFlow AI, September 2026) — a neutral-prompt political-bias spectrum (Western↔Chinese) across GPT / Claude / Qwen / DeepSeek / Kimi / MiniMax / GLM, plus their political-bias framework; and *"We're Cooked! — Probing LLM Political Alignment via Conflict-Framed Recipe Translation"* (arXiv:2609.07568). Cited for the imported-bias discussion.
 - **Indic safety resources** — MuRIL, AI4Bharat IndicLLMSuite (IndicAlign-Toxic), L3Cube-MahaHate — mentioned as the regional "guardrail" layer.
 
 The **SEA moneylending set** (`data/apac_moneylending.csv`) is synthetic and authored for this
