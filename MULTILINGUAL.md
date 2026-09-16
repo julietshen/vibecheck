@@ -83,9 +83,22 @@ not refusal)._
 
 ## Provenance and caveats
 
-- Datasets: **ChiFraud** (Tang et al., COLING 2025, CC BY-NC 4.0); **TB-OLID / HASOC 2024**
-  (AGPL-3.0); **SWSR** (Jiang et al., CC BY 4.0); **Uli** (Tattle, CC BY 4.0). The SEA
-  moneylending set is **synthetic** and needs native-speaker validation (`apac-customization/data/NOTICE.md`).
+- Datasets referenced (not redistributed) — please cite as their authors request:
+  - **ChiFraud** — Tang, Zou, Liang, Jin, Wang, Cui. *ChiFraud: A Long-Term Web Text
+    Benchmark for Chinese Fraud Detection.* COLING 2025, pp. 5962–5974. **CC BY-NC 4.0**
+    (non-commercial).
+  - **TB-OLID** — Raihan, Tanmoy, Islam, North, Ranasinghe, Anastasopoulos, Zampieri.
+    *Offensive Language Identification in Transliterated and Code-Mixed Bangla.* BLP @ EMNLP
+    2023. **AGPL-3.0.** (HASOC 2024 Bangla source.)
+  - **SWSR** — Aiqi Jiang, Xiaohan Yang, Yang Liu, Arkaitz Zubiaga. *SWSR: A Chinese dataset
+    and lexicon for online sexism detection.* Online Social Networks and Media 27 (2022)
+    100182, doi:10.1016/j.osnem.2021.100182. **CC BY 4.0.**
+  - **Uli** — Arnav Arora, Maha Jinadoss, Cheshta Arora, Denny George, et al. (Tattle Civic
+    Technologies). *The Uli Dataset: An Exercise in Experience Led Annotation of oGBV.*
+    arXiv:2311.09086, 2023. **CC BY 4.0.**
+  - **SEA moneylending set** — **synthetic**, authored for this project; needs
+    native-speaker validation (`apac-customization/data/NOTICE.md`).
+  Full BibTeX in `apac-customization/DATA_CREDITS.md`.
 - Small samples, single labeler, keyword/similarity selection bias — the general caveats in
   `README.md` apply. Synthetic-set scores demonstrate mechanism, not real-world accuracy.
 - Served-model figures require the cope-b / safeguard Modal endpoints (see `serve_cope.py`,
