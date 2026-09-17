@@ -43,6 +43,7 @@ This report answers all three empirically.
 | **cope-b-a4b** | Zentropi | ~50B (4B active) | policy-following classifier | Modal H100 |
 | **gpt-oss-safeguard-20b** | OpenAI | 20B | policy-following, emits chain-of-thought | Modal H100 |
 | **Qwen3-1.7B** | Alibaba | 1.7B | generic instruct model (base for fine-tuning) | local (MLX) |
+| **Qwen-SEA-Guard-8B** | AI Singapore | 8B | purpose-built regional guard (from SEA-LION v4), fixed taxonomy | local (transformers/MPS) |
 | **Qwen3-4B / Gemma-3-4B / Apertus-8B** | Alibaba / Google / EPFL-ETH | 4–8B | generic instruct (imported-bias probe) | local (MLX) |
 
 ### Harms and data (real where possible)
@@ -83,13 +84,18 @@ noted. For positive-only sets (Tagalog spam) we report **recall only** and claim
 | Model | SEA scam (Thai) | SEA spam (Tagalog, recall) | Chinese fraud | Bengali offensive | Steerable? | Reasoning |
 |---|---|---|---|---|---|---|
 | **Shieldstral-1.0-3B** | 0.85 | 58/60 | 0.946 | **0.387** | No (0–1% release) | No |
-| **cope-b-a4b** | — | — | 0.852 | 0.752 | **Yes (100%)** | No |
-| **gpt-oss-safeguard-20b** | — | — | 0.769 | 0.653 | **Yes (100%)** | Yes (CoT, in-language) |
+| **cope-b-a4b** | **0.975** | 52/60 | 0.852 | 0.752 | **Yes (100%)** | No |
+| **gpt-oss-safeguard-20b** | **0.975** | 51/60 | 0.769 | 0.653 | **Yes (100%)** | Yes (CoT, in-language) |
 | **Qwen3-1.7B** (base) | 0.845 | 58/60 | 0.769 | 0.643 | — | — |
 | **Qwen3-1.7B + LoRA** | **0.974** | 55/60 | 0.880 | **0.308** | — | — |
+| **SEA-Guard-8B** (regional) | 0.87 | 53/60 | 0.844 | 0.538 | No (fixed taxonomy) | No |
 
-(cope-b / safeguard were run on the earlier SEA set and the Chinese/Bengali sets; they were not
-re-run on the new real Thai/Tagalog data — H100 cost. Their SEA moneylending F1 was 1.00.)
+On real Thai scam the two policy-following models scored **F1 0.975 with just 1/40 legitimate
+messages wrongly flagged** — matching the fine-tuned small model (0.974) **without any
+fine-tuning**, because they apply the policy instead of over-triggering on Thai text. The
+un-customized generic model sits at 0.845 with **34/40 legitimate messages wrongly flagged**
+(§5). Two routes to the same place: fine-tune a small generic model, or run a policy-following
+one.
 
 The single most important column is not F1 — it is **what each model does to legitimate
 messages**, below.
@@ -110,6 +116,50 @@ depending on the language, and the drop tracks how well-resourced / standardized
 **Implication.** Benchmark averages hide this completely. A model that reports "multilingual,
 F1 0.9" can be at 0.39 in the one language your users actually write in. **You must evaluate
 your exact languages** before deployment — a per-language eval is not optional.
+
+---
+
+## 4a. Does the policy have to be in the user's language? (policy-language transfer)
+
+A practical question for any team: if my content is Thai or Chinese, do I have to write my
+policy in Thai or Chinese — or does an English policy work? We held the **content fixed** and
+varied only the **language the (same) scam policy is written in** (English / Thai / Chinese),
+on two models: a small generic model (Qwen3-1.7B) and a policy-following model (cope-b). F1:
+
+**Qwen3-1.7B (small, generic instruct):**
+
+| Content \ policy | English | Thai | Chinese |
+|---|---|---|---|
+| Thai (tu_scam) | **0.851** | 0.708 | 0.734 |
+| Chinese (ChiFraud) | **0.815** | 0.745 | 0.779 |
+| English | **1.00** | 0.889 | 0.889 |
+
+**cope-b-a4b (policy-following):**
+
+| Content \ policy | English | Thai | Chinese |
+|---|---|---|---|
+| Thai (tu_scam) | 0.975 | 0.974 | 0.949 |
+| Chinese (ChiFraud) | 0.927 | 0.911 | 0.937 |
+| English | 1.00 | 1.00 | 1.00 |
+
+**The answer is model-dependent — and the difference is the whole point:**
+
+- **A generic small model prefers an ENGLISH policy, even on non-English content.** On Thai
+  content, an English policy scored 0.85 vs 0.71 for a Thai policy; on Chinese, 0.82 vs 0.78.
+  Writing the policy in the content's language *hurt*. These models follow English instructions
+  far more reliably than Thai/Chinese ones, so the instruction-following gain outweighs any
+  language-match benefit.
+- **A policy-following model is robust to policy language.** cope-b scored within ~0.03 across
+  all three policy languages on every content set — write the policy in whatever language your
+  policy team works in; it transfers.
+
+**Implication.** For **Q1 (does an English policy work on APAC content?)** — **yes, and often
+better**, especially on smaller/generic models. For **Q2 (does an APAC-language policy work on
+APAC and English content?)** — it works, but on a small model it is *worse* than English and
+buys you nothing; on a steerable model it is fine either way. The takeaway for ops: **author
+your policy in the language your team writes best (usually English), and verify** — do not
+assume you must translate the policy to match the content, and do not assume translating it is
+harmless (on small models it degrades performance).
 
 ---
 
@@ -183,6 +233,39 @@ Decide deliberately *who owns the moderation boundary*: the policy author, or th
 
 ---
 
+## 7a. How does a purpose-built regional model do? (SEA-Guard)
+
+AI Singapore's **SEA-Guard** (`Qwen-SEA-Guard-8B-2602`, fine-tuned from SEA-LION v4 for
+Southeast-Asian cultural norms; native id/ms/my/ta/th/tl/vi/en) is the "buy a regional model"
+option. It is a **fixed-taxonomy safety classifier** — it outputs safe/unsafe against its own
+built-in notion of harm, not a policy you write. We ran it on the found datasets:
+
+| Dataset | Recall | Precision | F1 | Legit content flagged |
+|---|---|---|---|---|
+| **Thai scam** (tu_scam) | 1.00 | 0.77 | 0.87 | 9/30 (30%) |
+| **Tagalog spam** (SPAM_SMS) | 0.88 | — | 0.94 | (positive-only) |
+| **Chinese fraud** (ChiFraud) | 0.96 | 0.75 | 0.844 | 9/32 (28%) |
+| **Bengali offensive** (TB-OLID) | 0.47 | 0.64 | **0.538** | 8/30 |
+
+- **Strong on its home languages** (Thai, Tagalog, Chinese — high recall, no setup, no policy
+  to write) — a real advantage for a team that wants regional coverage out of the box.
+- **But it over-flags ~30% of legitimate content**: as a fixed-taxonomy guard it cannot be
+  tuned to "scam only", so it catches adjacent-but-benign messages. A policy-following model
+  (cope-b/safeguard, 1/40 FPs) or a fine-tuned one (0/40) is far more precise here.
+- **The low-resource cliff catches even the regional specialist**: Bengali — not one of its
+  eight target languages — drops to **0.54**. "Built for the region" is not "built for every
+  language in the region."
+- **It does not beat customization on accuracy**: on Thai/Tagalog it trails both the fine-tuned
+  Qwen (0.974) and the policy-followers (0.975). Its value is zero-effort regional coverage as
+  an always-on pre-filter or backstop, not top precision.
+
+**Implication.** A purpose-built regional model is a strong **default / backstop layer** — high
+recall in its languages with no policy engineering — but its fixed taxonomy makes it
+over-flag, and it still fails on languages outside its target set. Use it as one layer (broad,
+cheap, high-recall) under a policy-scoped or fine-tuned layer that supplies precision.
+
+---
+
 ## 8. Finding E — imported bias shows up at enforcement, and not where you'd expect
 
 Does a model's *origin* skew a moderation *decision*? We ran three origin-diverse small models
@@ -239,14 +322,19 @@ A production-readiness checklist, each item earned by a finding above:
 3. **Fine-tune on a few hundred real in-language examples** — it's laptop-cheap and fixed the
    Thai and Chinese false-positive problem outright — **but verify per language**; it can
    regress on subjective/low-resource harms. *(Findings B, C)*
-4. **Decide who owns the boundary.** Steerable model → policy edits are production changes →
+4. **Write the policy in your team's strongest language (usually English) and verify** — don't
+   assume you must translate it to match the content; on a small model translating it *hurts*,
+   on a steerable model it's a wash. *(Finding 4a)*
+5. **A regional model (SEA-Guard) is a good high-recall backstop, not a precision layer** — it
+   over-flags ~30% of legitimate content and still fails outside its target languages. *(§7a)*
+6. **Decide who owns the boundary.** Steerable model → policy edits are production changes →
    they need review/approval control. Fixed model → resists bad policy but can't be
    reconfigured. *(Finding D)*
-5. **Audit imported bias at the enforcement stage**, on your own policies; don't pick a base on
+7. **Audit imported bias at the enforcement stage**, on your own policies; don't pick a base on
    assumed neutrality of origin. *(Finding E)*
-6. **Match model tier to volume and cost.** Shieldstral-3B and Qwen-1.7B run free on a laptop;
+8. **Match model tier to volume and cost.** Shieldstral-3B and Qwen-1.7B run free on a laptop;
    cope-b / safeguard need an H100. Don't run a 20B reasoner on every message.
-7. **Check licenses** — models (Apache-2.0 Qwen vs restricted Llama/MiniMax) and datasets
+9. **Check licenses** — models (Apache-2.0 Qwen vs restricted Llama/MiniMax) and datasets
    (CC BY-**NC** = non-commercial; AGPL copyleft). *(Section 11)*
 
 ### Where humans stay in the loop
