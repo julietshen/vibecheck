@@ -82,7 +82,7 @@ This report answers all three empirically.
 | Model | Origin | Size | Type | Serving |
 |---|---|---|---|---|
 | **Shieldstral-1.0-3B** | Mistral | 3B | fixed-prior classifier (yes/no logits, multilingual/multimodal) | local (MLX, Apple silicon) |
-| **cope-b-a4b** | Zentropi | ~50B (4B active) | policy-following classifier | Modal H100 |
+| **cope-b-a4b** | Zentropi | 27B (4B active MoE) | policy-following classifier | Modal H100 |
 | **gpt-oss-safeguard-20b** | OpenAI | 20B | policy-following, emits chain-of-thought | Modal H100 |
 | **Qwen3-1.7B** | Alibaba | 1.7B | generic instruct model (base for fine-tuning) | local (MLX) |
 | **Qwen-SEA-Guard-8B** | AI Singapore | 8B | purpose-built regional guard (from SEA-LION v4), fixed taxonomy | local (transformers/MPS) |
