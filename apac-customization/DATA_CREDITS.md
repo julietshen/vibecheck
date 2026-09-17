@@ -67,6 +67,19 @@ https://doi.org/10.1016/j.osnem.2021.100182.
 }
 ```
 
+### tu_scam — Thai scam/phishing messages
+- **Source:** provided by the user (`tu_scam_dataset.csv.xlsx`); a labeled Thai scam corpus
+  (labels scam / normal / suspicious, with category + signal flags). Confirm the originating
+  source's license/terms before external publication.
+- **Used here:** balanced binary scam-vs-normal split for a real Thai evaluation and a real
+  Thai LoRA fine-tune; text truncated; `suspicious` excluded from the binary metric.
+
+### SPAM_SMS — Tagalog/Filipino SMS spam
+- **Source:** provided by the user (`SPAM_SMS.csv`); real Philippine SMS spam messages
+  (positive-only). Confirm the originating source's license/terms before external publication.
+- **Used here:** positive-only, scored recall-only (of real Tagalog spam, how much each model
+  catches); text truncated.
+
 ---
 
 ### Also referenced (not used as training/eval data)

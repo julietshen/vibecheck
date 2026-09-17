@@ -70,17 +70,17 @@ def prf(tp, fp, fn):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--test", default=os.path.join(ROOT, "data", "apac_moneylending.csv"))
-    ap.add_argument("--domain", choices=["moneylending", "offensive", "gendered"], default="moneylending")
+    ap.add_argument("--domain", choices=["moneylending", "offensive", "gendered", "scam"], default="moneylending")
     ap.add_argument("--limit", type=int, default=None, help="cap rows (default: all)")
     ap.add_argument("--threshold", type=float, default=0.5)
     args = ap.parse_args()
     # non-moneylending domains have no steerability sweep; use their baseline policy
     if args.domain != "moneylending":
         sys.path.insert(0, ROOT)
-        from common import POLICY_OFFENSIVE, POLICY_GENDERED
+        from common import POLICY_OFFENSIVE, POLICY_GENDERED, POLICY_SCAM
         POLICIES.clear()
-        POLICIES["flag_" + args.domain] = (POLICY_OFFENSIVE if args.domain == "offensive"
-                                            else POLICY_GENDERED)
+        POLICIES["flag_" + args.domain] = {"offensive": POLICY_OFFENSIVE,
+                                           "gendered": POLICY_GENDERED, "scam": POLICY_SCAM}[args.domain]
 
     import torch
     from transformers import AutoTokenizer, AutoModelForImageTextToText

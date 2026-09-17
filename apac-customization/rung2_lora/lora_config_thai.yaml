@@ -1,0 +1,24 @@
+# LoRA fine-tune of Qwen3-1.7B on REAL Thai scam data (tu_scam: scam vs normal).
+# Replaces the synthetic-SEA fine-tune with a real-language before/after.
+# Run from project root:
+#   ../.venv/bin/python -m mlx_lm lora --config rung2_lora/lora_config_thai.yaml
+model: "mlx-community/Qwen3-1.7B-bf16"
+train: true
+data: "data/sea_scam/mlx"
+adapter_path: "rung2_lora/adapters_thai"
+
+fine_tune_type: lora
+num_layers: 8
+batch_size: 4
+iters: 400
+learning_rate: 1e-4
+steps_per_report: 25
+steps_per_eval: 200
+save_every: 200
+max_seq_length: 512
+grad_checkpoint: false
+
+lora_parameters:
+  rank: 16
+  scale: 20.0
+  dropout: 0.0

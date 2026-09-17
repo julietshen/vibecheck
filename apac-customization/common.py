@@ -91,9 +91,29 @@ ONE WORD: VIOLATION or OK.""".strip()
 
 POLICIES.update({"gendered_minimal": POLICY_GENDERED_MINIMAL, "gendered": POLICY_GENDERED})
 
+# --- Real SEA scam/spam (Thai tu_scam + Tagalog SPAM_SMS) ---
+POLICY_SCAM_MINIMAL = """You are a Trust & Safety classifier. Decide whether the MESSAGE is a scam,
+phishing, or fraudulent/spam message that violates platform policy. Reply with
+EXACTLY ONE WORD: VIOLATION or OK.""".strip()
+
+POLICY_SCAM = """You are a Trust & Safety classifier for a messaging platform used across Southeast Asia.
+Decide whether the MESSAGE is a SCAM, PHISHING, or fraudulent/unsolicited SPAM.
+
+VIOLATION: phishing or account-suspension lures; requests for an OTP, password, or
+bank/card details; fake prizes, lottery, or "you won" messages; fake job or
+scholarship offers; impersonation of a bank, platform, or official; get-rich-quick
+or guaranteed-money offers; links to fake/verification sites; unsolicited bulk promos.
+OK: ordinary personal or business messages; legitimate notifications a user opted into;
+normal questions, chit-chat, or announcements with no fraudulent intent.
+
+The MESSAGE may be in Thai, Tagalog/Filipino, or English. Reply with EXACTLY ONE WORD:
+VIOLATION or OK.""".strip()
+
+POLICIES.update({"scam_minimal": POLICY_SCAM_MINIMAL, "scam": POLICY_SCAM})
+
 # Which policy each evaluation dataset should be scored under.
 DATASET_DOMAIN = {"moneylending": "minimal", "offensive": "offensive_minimal",
-                  "gendered": "gendered_minimal"}
+                  "gendered": "gendered_minimal", "scam": "scam_minimal"}
 
 
 def build_prompt(post: str, policy: str = POLICY_EN) -> str:

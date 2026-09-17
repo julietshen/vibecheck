@@ -2,15 +2,22 @@
 rung2_lora/adapters/
 rung2_lora/adapters_chifraud/
 rung2_lora/adapters_bengali/
+rung2_lora/adapters_thai/
 # Samples derived from vendored datasets — regenerate from source (see build scripts):
 #   ChiFraud (CC BY-NC 4.0), TB-OLID/HASOC (AGPL-3.0), SWSR + Uli (CC BY 4.0)
 data/chifraud/
 data/bengali/
 data/gendered/
+# SEA scam: ignore derived data but keep the provenance NOTICE
+data/sea_scam/*
+!data/sea_scam/NOTICE.md
+# raw source data (user-provided; not for redistribution)
+data/thai_scam/
 # Prediction CSVs that embed raw vendored text (aggregate summary_*.json are kept)
 results/predictions_zh_*.csv
 results/predictions_bn_*.csv
 results/predictions_g_*.csv
+results/predictions_sea_*.csv
 # scratch
 __pycache__/
 *.pyc
