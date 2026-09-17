@@ -1,4 +1,4 @@
-"""zentropi-ai/cope-b-a4b — standalone MoE classifier (~4B active / ~50B total).
+"""zentropi-ai/cope-b-a4b — standalone MoE classifier (4B active / 27B total).
 Served via vLLM on Modal; requires /v1/chat/completions (chat-template-aware).
 Emits a single 0/1 token."""
 
