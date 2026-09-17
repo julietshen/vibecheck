@@ -125,7 +125,7 @@ data for the headline SEA column; it is retained only as a controlled illustrati
 ### Metric
 
 F1 for the harm (positive = the harm), under one generic plain-language policy per harm, unless
-noted. For positive-only sets (Tagalog spam) we report **recall only** and claim no precision.
+noted. For positive-only sets (Philippine spam) we report **recall only** and claim no precision.
 "Hard-negative false positives" = legitimate content wrongly flagged (the quiet, costly error).
 
 ---
@@ -454,7 +454,7 @@ their text are git-ignored; regenerate the samples from source with the `build_*
 - **Uli** — Arnav Arora, Maha Jinadoss, Cheshta Arora, Denny George, et al. (Tattle Civic
   Technologies). *The Uli Dataset: An Exercise in Experience Led Annotation of oGBV.*
   arXiv:2311.09086, 2023. **CC BY 4.0.**
-- **tu_scam** (Thai scam) and **SPAM_SMS** (Tagalog spam) — user-provided; confirm the
+- **tu_scam** (Thai scam) and **SPAM_SMS** (Philippine SMS spam, largely English/Taglish) — user-provided; confirm the
   originating source's license/terms before external publication.
 - **SEA moneylending set** — synthetic, authored for this project; needs native-speaker
   validation (`apac-customization/data/NOTICE.md`).
