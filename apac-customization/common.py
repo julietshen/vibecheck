@@ -111,6 +111,30 @@ VIOLATION or OK.""".strip()
 
 POLICIES.update({"scam_minimal": POLICY_SCAM_MINIMAL, "scam": POLICY_SCAM})
 
+# Same scam policy authored IN Thai and IN Chinese, for the policy-language ×
+# content-language transfer grid (best-effort translations; validate before publishing).
+POLICY_SCAM_TH = """คุณเป็นระบบจำแนกความปลอดภัยสำหรับแพลตฟอร์มข้อความในเอเชียตะวันออกเฉียงใต้
+ให้ตัดสินว่าข้อความเป็นการหลอกลวง (สแกม) ฟิชชิง หรือสแปมหลอกลวงหรือไม่
+
+ละเมิด (VIOLATION): การหลอกให้กดลิงก์ยืนยันบัญชี/บัญชีถูกระงับ; การขอรหัส OTP รหัสผ่าน
+หรือข้อมูลธนาคาร/บัตร; รางวัลปลอม ลอตเตอรี่ "คุณถูกรางวัล"; งานปลอมหรือทุนการศึกษาปลอม;
+การแอบอ้างเป็นธนาคาร แพลตฟอร์ม หรือหน่วยงาน; ข้อเสนอรวยเร็วหรือรับประกันเงิน; ลิงก์เว็บปลอม
+ไม่ละเมิด (OK): ข้อความส่วนตัวหรือธุรกิจปกติ; การแจ้งเตือนที่ผู้ใช้สมัครไว้; คำถาม พูดคุยทั่วไป
+
+ตอบเป็นคำเดียวเท่านั้น: VIOLATION หรือ OK""".strip()
+
+POLICY_SCAM_ZH = """你是东南亚一个消息平台的信任与安全分类器。
+判断这条消息是否属于诈骗、钓鱼或欺诈性垃圾信息。
+
+违规 (VIOLATION)：账户被冻结/需验证的钓鱼诱导；索要一次性验证码(OTP)、密码或银行卡信息；
+虚假中奖、彩票、"你中奖了"；虚假招聘或奖学金；冒充银行、平台或官方机构；快速致富或保证收益；
+指向虚假/验证网站的链接。
+不违规 (OK)：正常的私人或业务消息；用户已订阅的合法通知；普通提问与闲聊。
+
+只回答一个词：VIOLATION 或 OK""".strip()
+
+POLICIES.update({"scam_th": POLICY_SCAM_TH, "scam_zh": POLICY_SCAM_ZH})
+
 # Which policy each evaluation dataset should be scored under.
 DATASET_DOMAIN = {"moneylending": "minimal", "offensive": "offensive_minimal",
                   "gendered": "gendered_minimal", "scam": "scam_minimal"}

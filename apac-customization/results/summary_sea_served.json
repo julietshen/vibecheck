@@ -1,0 +1,18 @@
+{
+  "cope-b": {
+    "thai_F1": 0.975,
+    "thai_P": 0.975,
+    "thai_R": 0.975,
+    "thai_normal_FP": "1/40",
+    "tagalog_recall": "52/60",
+    "unparsed": 0
+  },
+  "safeguard": {
+    "thai_F1": 0.975,
+    "thai_P": 0.975,
+    "thai_R": 0.975,
+    "thai_normal_FP": "1/40",
+    "tagalog_recall": "51/60",
+    "unparsed": 0
+  }
+}

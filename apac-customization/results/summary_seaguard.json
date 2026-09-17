@@ -1,0 +1,34 @@
+{
+  "Thai scam": {
+    "n": 60,
+    "recall": 1.0,
+    "precision": 0.769,
+    "F1": 0.87,
+    "neg_FP": "9/30",
+    "unparsed": 0
+  },
+  "Tagalog spam": {
+    "n": 60,
+    "recall": 0.883,
+    "precision": 1.0,
+    "F1": 0.938,
+    "neg_FP": "n/a (positive-only)",
+    "unparsed": 0
+  },
+  "Chinese fraud": {
+    "n": 60,
+    "recall": 0.964,
+    "precision": 0.75,
+    "F1": 0.844,
+    "neg_FP": "9/32",
+    "unparsed": 0
+  },
+  "Bengali offensive": {
+    "n": 60,
+    "recall": 0.467,
+    "precision": 0.636,
+    "F1": 0.538,
+    "neg_FP": "8/30",
+    "unparsed": 0
+  }
+}
