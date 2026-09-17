@@ -47,9 +47,11 @@ fine-tuning** by applying a policy (cope-b, gpt-oss-safeguard). *(§5, §6)*
 
 **Q4. How well does the region's own open model (SEA-Guard) work on these datasets?**
 **Strong on its home languages, but a fixed taxonomy limits precision, and it still has a
-low-resource cliff.** SEA-Guard scored Thai 0.87, Tagalog 0.94, Chinese 0.844 — high recall with
-no policy engineering — but over-flagged ~30% of legitimate content (it cannot be tuned to your
-policy) and dropped to **0.538 on Bengali**, which is outside its eight target languages. It did
+low-resource cliff.** SEA-Guard scored Thai 0.87, Philippine spam 0.94, Chinese 0.844 — high
+recall with no policy engineering — but over-flagged ~30% of legitimate content (it cannot be
+tuned to your policy) and dropped to **0.538 on Bengali**, which is outside its eight target
+languages. (The Philippine SMS set is largely English/Taglish — see the language-composition
+caveat in §2 — so that number partly reflects English detection.) It did
 not beat the fine-tuned or policy-following models on precision. Best used as a high-recall
 backstop layer, not the whole pipeline. *(§7a)*
 
@@ -90,14 +92,23 @@ This report answers all three empirically.
 
 | Harm | Languages | Dataset | Real? | n (test) |
 |---|---|---|---|---|
-| **Scam / phishing / spam** | Thai, Tagalog | tu_scam (Thai, balanced scam/normal) + SPAM_SMS (Tagalog, spam-only) | **Real** | Thai 80 · Tagalog 60 |
+| **Scam / phishing / spam** | Thai; Philippine Taglish/English | tu_scam (Thai, balanced scam/normal) + SPAM_SMS (Philippine SMS spam, spam-only) | **Real** | Thai 80 · PH 60 |
 | **Fraud** | Chinese | ChiFraud (地下黑贷 underground loans vs normal), CC BY-NC | **Real** | 80 |
 | **Offensive language** | Bengali (romanized/code-mixed) | TB-OLID / HASOC, AGPL | **Real** | 60 |
 | **Gendered abuse** | Chinese, Hindi, Tamil, English | SWSR (zh, CC BY) + Uli (hi/ta/en, CC BY) | **Real** | 160 |
 | Moneylending ads | id/ms/th/tl/vi | hand-authored | Synthetic (mechanism demo only) | 30 |
 
-The **synthetic SEA moneylending set has been superseded** by the real Thai + Tagalog scam
+The **synthetic SEA moneylending set has been superseded** by the real Thai + Philippine scam
 data for the headline SEA column; it is retained only as a controlled illustration.
+
+> **Language-composition caveat (measured, not assumed).** The Thai set is genuinely Thai:
+> **81% of its letters are Thai script** and 53/80 test messages are Thai-dominant (≥80% Thai),
+> the rest Thai–English mixed. The Philippine SMS set is a different story: Philippine spam is
+> heavily English/Taglish, so of 60 messages only ~40 carry any Tagalog marker word (22 mixed
+> Taglish), and ~19 are essentially English ("Dear BANCO DE ORO Bank Customer…", "GCash
+> Alert!"). **The "Tagalog" results therefore partly measure English/Taglish detection, not
+> Tagalog-language competence** — read them as *Philippine SMS spam recall*, and treat the Thai
+> numbers as the clean cross-language finding.
 
 ### The three customization levers we measured
 
@@ -114,14 +125,14 @@ data for the headline SEA column; it is retained only as a controlled illustrati
 ### Metric
 
 F1 for the harm (positive = the harm), under one generic plain-language policy per harm, unless
-noted. For positive-only sets (Tagalog spam) we report **recall only** and claim no precision.
+noted. For positive-only sets (Philippine spam) we report **recall only** and claim no precision.
 "Hard-negative false positives" = legitimate content wrongly flagged (the quiet, costly error).
 
 ---
 
 ## 3. Detection F1 by language
 
-| Model | SEA scam (Thai) | SEA spam (Tagalog, recall) | Chinese fraud | Bengali offensive | Steerable? | Reasoning |
+| Model | SEA scam (Thai) | PH spam (Taglish/EN, recall) | Chinese fraud | Bengali offensive | Steerable? | Reasoning |
 |---|---|---|---|---|---|---|
 | **Shieldstral-1.0-3B** | 0.85 | 58/60 | 0.946 | **0.387** | No (0–1% release) | No |
 | **cope-b-a4b** | **0.975** | 52/60 | 0.852 | 0.752 | **Yes (100%)** | No |
@@ -290,19 +301,20 @@ built-in notion of harm, not a policy you write. We ran it on the found datasets
 | Dataset | Recall | Precision | F1 | Legit content flagged |
 |---|---|---|---|---|
 | **Thai scam** (tu_scam) | 1.00 | 0.77 | 0.87 | 9/30 (30%) |
-| **Tagalog spam** (SPAM_SMS) | 0.88 | — | 0.94 | (positive-only) |
+| **Philippine spam** (SPAM_SMS, Taglish/EN) | 0.88 | — | 0.94 | (positive-only) |
 | **Chinese fraud** (ChiFraud) | 0.96 | 0.75 | 0.844 | 9/32 (28%) |
 | **Bengali offensive** (TB-OLID) | 0.47 | 0.64 | **0.538** | 8/30 |
 
-- **Strong on its home languages** (Thai, Tagalog, Chinese — high recall, no setup, no policy
-  to write) — a real advantage for a team that wants regional coverage out of the box.
+- **Strong on its home languages** (Thai, Philippine spam, Chinese — high recall, no setup, no
+  policy to write) — a real advantage for a team that wants regional coverage out of the box.
+  (The Philippine set is largely English/Taglish, so its recall partly reflects English.)
 - **But it over-flags ~30% of legitimate content**: as a fixed-taxonomy guard it cannot be
   tuned to "scam only", so it catches adjacent-but-benign messages. A policy-following model
   (cope-b/safeguard, 1/40 FPs) or a fine-tuned one (0/40) is far more precise here.
 - **The low-resource cliff catches even the regional specialist**: Bengali — not one of its
   eight target languages — drops to **0.54**. "Built for the region" is not "built for every
   language in the region."
-- **It does not beat customization on accuracy**: on Thai/Tagalog it trails both the fine-tuned
+- **It does not beat customization on accuracy**: on Thai and Philippine spam it trails both the fine-tuned
   Qwen (0.974) and the policy-followers (0.975). Its value is zero-effort regional coverage as
   an always-on pre-filter or backstop, not top precision.
 
@@ -442,7 +454,7 @@ their text are git-ignored; regenerate the samples from source with the `build_*
 - **Uli** — Arnav Arora, Maha Jinadoss, Cheshta Arora, Denny George, et al. (Tattle Civic
   Technologies). *The Uli Dataset: An Exercise in Experience Led Annotation of oGBV.*
   arXiv:2311.09086, 2023. **CC BY 4.0.**
-- **tu_scam** (Thai scam) and **SPAM_SMS** (Tagalog spam) — user-provided; confirm the
+- **tu_scam** (Thai scam) and **SPAM_SMS** (Philippine SMS spam, largely English/Taglish) — user-provided; confirm the
   originating source's license/terms before external publication.
 - **SEA moneylending set** — synthetic, authored for this project; needs native-speaker
   validation (`apac-customization/data/NOTICE.md`).
