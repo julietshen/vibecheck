@@ -9,10 +9,14 @@ vendored** here (regenerate with `data/build_sea_real.py`):
   is excluded from the binary metric. Provides both a real Thai eval and a real Thai
   fine-tune. (Placeholder domains like `example.invalid` indicate a constructed/
   benchmark corpus — real Thai text, curated labels.)
-- **Tagalog/Filipino — `SPAM_SMS.csv`** (`~/Downloads/SPAM_SMS.csv`): real Philippine
-  SMS spam. **Positive-only** (no benign labels), so Tagalog is scored **recall-only**
-  (of real spam, how much each model catches) — no precision/FP number is claimed for
-  Tagalog.
+- **Philippine SMS spam — `SPAM_SMS.csv`** (`~/Downloads/SPAM_SMS.csv`): real Philippine
+  SMS spam. **Positive-only** (no benign labels), so it is scored **recall-only** (of real
+  spam, how much each model catches) — no precision/FP number is claimed.
+  **Language caveat (measured):** Philippine SMS spam is heavily English/Taglish. On the
+  60-item test set, ~40/60 carry a Tagalog marker word (22 mixed Taglish) and ~19 are
+  essentially English. Recall here **partly measures English/Taglish detection, not
+  Tagalog-language competence** — label it "Philippine SMS spam", not a clean Tagalog test.
+  (The Thai set, by contrast, is 81% Thai script and genuinely Thai.)
 
 This replaces the earlier hand-authored synthetic SEA moneylending set for the SEA
 column of the matrix. If you publish, confirm the license/terms of each source dataset
