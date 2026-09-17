@@ -15,6 +15,46 @@ per-run artefacts live in `apac-customization/`.
 
 ---
 
+## Research questions & answers (summary)
+
+Four questions drove this study. Short answers here; the evidence is in the numbered sections.
+
+**Q1. Do English-written policies work well on APAC-language content?**
+**Yes — and on a small generic model, an English policy was the *most accurate* option, even on
+Thai and Chinese content** (Thai content: English policy 0.85 vs Thai policy 0.71; Chinese:
+0.82 vs 0.78). A policy-following model (cope-b) applied an English policy to Thai/Chinese
+content at 0.93–0.98. So an English policy transfers across the language barrier — you do **not**
+have to write the policy in the content's language. *(§4a)*
+
+**Q2. Do APAC-language policies work well on APAC-language *and* English content?**
+**They work, but how well depends on the model.** A policy-following model applied a Thai or
+Chinese policy about as well as an English one (all within ~0.03 across content languages) — so a
+team that authors policy in Thai, Bahasa, or Tamil can do so without penalty. A small generic
+model applied a non-English policy noticeably *worse* (Thai policy on Thai content 0.71 vs 0.85
+for English) — not because English is better, but because these models are trained mostly on
+English instructions. The fix is to use a policy-following model (or fine-tune), **not** to
+switch your policy to English. *(§4a)*
+
+**Q3. How easy and effective is it to fine-tune an open model to understand nuance?**
+**Very easy and very effective for clear harms; not a guarantee for subjective ones.** A LoRA
+fine-tune of a 1.7B model on ~300–370 real in-language examples took **~2 minutes on a laptop**
+and, on real Thai scam, cut false-positives on legitimate messages from **85% to 0%** (F1
+0.845→0.974); on real Chinese fraud it cut them 40%→5% (0.769→0.880). But the *same* recipe on
+subjective romanized-Bengali offensive language made it **worse** (0.643→0.308). Fine-tuning
+rewards clear harms with enough good labels; subjective, low-resource harms may need better data,
+not a bigger adapter. Note two open models reached the same ~0.975 on Thai scam **without any
+fine-tuning** by applying a policy (cope-b, gpt-oss-safeguard). *(§5, §6)*
+
+**Q4. How well does the region's own open model (SEA-Guard) work on these datasets?**
+**Strong on its home languages, but a fixed taxonomy limits precision, and it still has a
+low-resource cliff.** SEA-Guard scored Thai 0.87, Tagalog 0.94, Chinese 0.844 — high recall with
+no policy engineering — but over-flagged ~30% of legitimate content (it cannot be tuned to your
+policy) and dropped to **0.538 on Bengali**, which is outside its eight target languages. It did
+not beat the fine-tuned or policy-following models on precision. Best used as a high-recall
+backstop layer, not the whole pipeline. *(§7a)*
+
+---
+
 ## 1. Why this study exists
 
 Open trust-&-safety tooling is built disproportionately in North America and Europe, and the
@@ -25,7 +65,7 @@ open model in production:
 1. **Does it actually work in my languages** — not the benchmark average, but Thai, Tagalog,
    Bengali, Hindi, Tamil, Chinese specifically?
 2. **Can I customize it** to a local definition of harm — by editing a policy, by fine-tuning,
-   or by picking a different base — and how much does each buy me?
+   or by picking a different base — and how much does each gain me?
 3. **What does it import** — whose notion of "harmful" or "acceptable" is baked in, and does
    that bias my enforcement?
 
@@ -144,22 +184,28 @@ on two models: a small generic model (Qwen3-1.7B) and a policy-following model (
 
 **The answer is model-dependent — and the difference is the whole point:**
 
-- **A generic small model prefers an ENGLISH policy, even on non-English content.** On Thai
-  content, an English policy scored 0.85 vs 0.71 for a Thai policy; on Chinese, 0.82 vs 0.78.
-  Writing the policy in the content's language *hurt*. These models follow English instructions
-  far more reliably than Thai/Chinese ones, so the instruction-following gain outweighs any
-  language-match benefit.
+- **A generic small model applied the ENGLISH policy more accurately, even on non-English
+  content.** On Thai content an English policy scored 0.85 vs 0.71 for the Thai policy; on
+  Chinese, 0.82 vs 0.78. Writing the policy in the content's own language *lowered* accuracy.
+  The cause is a model limitation, not a virtue of English: these models are trained
+  overwhelmingly on English instructions, so they follow an English-written policy more reliably
+  than a Thai- or Chinese-written one. That is itself a gap — the model under-serves teams who
+  write policy in their own language.
 - **A policy-following model is robust to policy language.** cope-b scored within ~0.03 across
-  all three policy languages on every content set — write the policy in whatever language your
-  policy team works in; it transfers.
+  all three policy languages on every content set — a policy written in Thai, Chinese, or English
+  works about equally, so a team can author in whatever language it works in.
 
-**Implication.** For **Q1 (does an English policy work on APAC content?)** — **yes, and often
-better**, especially on smaller/generic models. For **Q2 (does an APAC-language policy work on
-APAC and English content?)** — it works, but on a small model it is *worse* than English and
-buys you nothing; on a steerable model it is fine either way. The takeaway for ops: **author
-your policy in the language your team writes best (usually English), and verify** — do not
-assume you must translate the policy to match the content, and do not assume translating it is
-harmless (on small models it degrades performance).
+**Implication.** For **Q1 (does an English policy work on APAC content?)** — **yes, and on a
+generic small model it was the most accurate option.** For **Q2 (does an APAC-language policy
+work on APAC and English content?)** — **it works, but how well depends on the model**: a
+policy-following model applies a Thai or Chinese policy as well as an English one, while a small
+generic model applies a non-English policy noticeably *worse*. The takeaway is **not** "write
+policy in English": a team's strongest language may be Thai, Bahasa, or Tamil, and a policy
+should be authored in the language its writers reason most precisely in. The takeaway is
+**(a)** you do not have to translate the policy to match the content's language, and **(b)** if
+you author in a non-English language, use a policy-following model and verify — a small generic
+model may apply your in-language policy less accurately, which is a reason to prefer a
+policy-following model (or to fine-tune) rather than to switch your policy to English.
 
 ---
 
@@ -236,8 +282,9 @@ Decide deliberately *who owns the moderation boundary*: the policy author, or th
 ## 7a. How does a purpose-built regional model do? (SEA-Guard)
 
 AI Singapore's **SEA-Guard** (`Qwen-SEA-Guard-8B-2602`, fine-tuned from SEA-LION v4 for
-Southeast-Asian cultural norms; native id/ms/my/ta/th/tl/vi/en) is the "buy a regional model"
-option. It is a **fixed-taxonomy safety classifier** — it outputs safe/unsafe against its own
+Southeast-Asian cultural norms; native id/ms/my/ta/th/tl/vi/en) is the "adopt an open model
+someone already built for the region" option — it is free and open-weight, like everything
+else here. It is a **fixed-taxonomy safety classifier** — it outputs safe/unsafe against its own
 built-in notion of harm, not a policy you write. We ran it on the found datasets:
 
 | Dataset | Recall | Precision | F1 | Legit content flagged |
@@ -322,11 +369,12 @@ A production-readiness checklist, each item earned by a finding above:
 3. **Fine-tune on a few hundred real in-language examples** — it's laptop-cheap and fixed the
    Thai and Chinese false-positive problem outright — **but verify per language**; it can
    regress on subjective/low-resource harms. *(Findings B, C)*
-4. **Write the policy in your team's strongest language (usually English) and verify** — don't
-   assume you must translate it to match the content; on a small model translating it *hurts*,
-   on a steerable model it's a wash. *(Finding 4a)*
-5. **A regional model (SEA-Guard) is a good high-recall backstop, not a precision layer** — it
-   over-flags ~30% of legitimate content and still fails outside its target languages. *(§7a)*
+4. **Author the policy in your team's strongest language — but pick the model to match.** You
+   don't have to translate the policy to the content's language. If your team writes policy in a
+   non-English language (Thai, Bahasa, Tamil…), use a policy-following model, which applies it as
+   well as English; a small generic model applies a non-English policy noticeably worse. *(§4a)*
+5. **A regional open model (SEA-Guard) is a good high-recall backstop, not a precision layer** —
+   it over-flags ~30% of legitimate content and still fails outside its target languages. *(§7a)*
 6. **Decide who owns the boundary.** Steerable model → policy edits are production changes →
    they need review/approval control. Fixed model → resists bad policy but can't be
    reconfigured. *(Finding D)*
