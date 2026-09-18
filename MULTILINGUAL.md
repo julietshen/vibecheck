@@ -405,23 +405,30 @@ China-sensitive topics (Taiwan, Tiananmen, Xinjiang, Hong Kong, Tibet, Xi/CCP, c
 non-China controls (US/India/Russia). Every opinion is correct-label **OK**. Asymmetry =
 flag_rate(dissent) − flag_rate(state-aligned); positive = over-removes dissent.
 
-| Model | Origin | Calibration (hate / benign) | China: state vs dissent flagged | China asym. | Control asym. |
+Enlarged to **25 China + 15 control topic-pairs** (50 + 30 opinions) with a paired bootstrap 95%
+CI on the asymmetry (resampled over topic-pairs). Positive asymmetry = over-removes dissent.
+
+| Model | Origin | Calibration | China: state vs dissent | China asym. [95% CI] | Control asym. [95% CI] |
 |---|---|---|---|---|---|
-| **Qwen3-4B** | 🇨🇳 Alibaba | 2/2 hate, 0/2 benign ✓ | 0/7 vs 0/7 | **+0.00** | +0.00 |
-| **Gemma-3-4B** | 🇺🇸 Google | 2/2 hate, 0/2 benign ✓ | 1/7 vs 0/7 | −0.14 | +0.00 |
-| **Apertus-8B** | 🇨🇭 EPFL/ETH | 2/2 hate, 0/2 benign ✓ | 5/7 vs 7/7 | **+0.29** | **+0.67** |
+| **Qwen3-4B** | 🇨🇳 Alibaba | 4/4 hate, 0/4 benign ✓ | 0/25 vs 1/25 | **+0.04 [+0.00, +0.12]** | +0.00 [+0.00, +0.00] |
+| **Gemma-3-4B** | 🇺🇸 Google | 4/4 hate, 0/4 benign ✓ | 4/25 vs 1/25 | −0.12 [−0.28, +0.04] | −0.07 [−0.20, +0.00] |
+| **Apertus-8B** | 🇨🇭 EPFL/ETH | 4/4 hate, 0/4 benign ✓ | 18/25 vs 23/25 | +0.20 [−0.04, +0.40] | **+0.67 [+0.40, +0.87]** |
 
 The intuitive fear — a Chinese model over-removing dissent — **did not appear in enforcement**:
-Qwen was the *most neutral enforcer*, passing every political opinion on both sides. The
-enforcement bias showed up on **Apertus**, the Swiss "transparency / neutral" model often
-pitched as the imported-bias-safe base: it over-flags political speech broadly (5–7 of 7) and
-skews toward removing **dissent** (+0.29 on China topics, +0.67 on controls incl. India/Russia).
+Qwen was the *most neutral enforcer* (+0.04, CI hugging zero), flagging 1 of 50 China opinions
+and 0 of 30 controls. The enforcement bias showed up on **Apertus**, the Swiss "transparency /
+neutral" model often pitched as the imported-bias-safe base — and it is the only asymmetry whose
+CI **excludes zero** (control **+0.67 [+0.40, +0.87]**, statistically clear).
 
-**Why — and the confound.** The likely driver is not national ideology but **over-cautious
-moderation interacting with tone**: dissent framings ("atrocities", "authoritarian",
-"aggressor") read as more charged than state-aligned praise, so a trigger-happy model
-systematically suppresses criticism regardless of politics. This probe cannot fully separate
-that from ideology, because the two framings differ in tone by construction.
+**Why — and the confound.** The larger sample makes the mechanism visible: Apertus over-flags
+China political speech on **both** sides (state-aligned 18/25, dissent 23/25 — 41 of 50), so its
+China asymmetry is real but noisy (CI crosses zero); on the control topics it clearly targets
+**dissent** (13/15 vs 3/15). That pattern points not to national ideology but to **over-cautious
+moderation × tone**: dissent framings ("atrocities", "authoritarian", "aggressor") read as more
+charged than state-aligned praise, so a trigger-happy model suppresses confrontational speech
+regardless of target. This probe cannot fully separate that from ideology (the two framings
+differ in tone by construction), but the direction is unambiguous — the "neutral-origin" model
+was the *worst* enforcer, not the Chinese one.
 
 **Relation to LatticeFlow.** This measures **enforcement** (does it flag one side more) and is
 complementary to **LatticeFlow AI**, *Chinese Politics — Bias Assessment*
@@ -503,9 +510,10 @@ a global model lacks. The empty corner — steerable *and* uniformly multilingua
   and synthetic-set first-pass numbers elsewhere in the git history predate the enlargement.
 - **Selection bias.** Positives were surfaced by keyword/label sampling, so reported recall is
   an upper bound on findable harm, not harm in general.
-- **The imported-bias probe is tiny (24 items) and verdict-only** — it cannot see reasoning-level
-  reframing, uses one policy phrasing, and its tone/ideology confound is unresolved. Read it as
-  "run this audit yourself," not a verdict on any model.
+- **The imported-bias probe (88 items, 40 topic-pairs) is verdict-only** — it cannot see
+  reasoning-level reframing, uses one policy phrasing, and its tone/ideology confound is
+  unresolved (dissent framings are more confrontational by construction). CIs come from a paired
+  bootstrap over topic-pairs. Read it as "run this audit yourself," not a verdict on any model.
 - **Served models (cope-b, safeguard) were not re-run on the new real Thai/Tagalog data** (H100
   cost); their SEA figures are from the earlier set.
 - **Fine-tune / eval sets can overlap in distribution** for constructed corpora (e.g. tu_scam);
