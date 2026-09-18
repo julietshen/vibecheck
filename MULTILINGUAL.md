@@ -36,14 +36,16 @@ English instructions. The fix is to use a policy-following model (or fine-tune),
 switch your policy to English. *(§4a)*
 
 **Q3. How easy and effective is it to fine-tune an open model to understand nuance?**
-**Very easy and very effective for clear harms; not a guarantee for subjective ones.** A LoRA
-fine-tune of a 1.7B model on ~300–370 real in-language examples took **~2 minutes on a laptop**
-and, on real Thai scam, cut false-positives on legitimate messages from **85% to 0%** (F1
-0.845→0.974); on real Chinese fraud it cut them 40%→5% (0.769→0.880). But the *same* recipe on
-subjective romanized-Bengali offensive language made it **worse** (0.643→0.308). Fine-tuning
-rewards clear harms with enough good labels; subjective, low-resource harms may need better data,
-not a bigger adapter. Note two open models reached the same ~0.975 on Thai scam **without any
-fine-tuning** by applying a policy (cope-b, gpt-oss-safeguard). *(§5, §6)*
+**Very easy and very effective for clear harms; no help for subjective ones.** A **separate
+per-language** LoRA (270–370 real balanced examples, ~2 min on a laptop) on real Thai scam took
+the model from flagging **87% of legitimate messages** (FPR 0.87, MCC 0.26) to **0%** (FPR 0.00,
+MCC 1.00); on Chinese fraud FPR 0.29→0.05 (MCC 0.63→0.85). On subjective romanized-Bengali
+offensive language it did **not** help — the base was worse-than-random (MCC −0.04) and the
+fine-tune only flipped over-flagging into under-flagging (MCC 0.10); neither discriminates.
+Fine-tuning rewards clear harms with enough good labels; subjective, low-resource harms need
+better data, not a bigger adapter. Note the two policy-following models reached MCC 0.81–0.89 on
+Thai **without any fine-tuning** — and the fine-tuned small model is **~4–10× faster** (150 ms/item
+vs 580–1610 ms). *(§3, §5, §6)*
 
 **Q4. How well does the region's own open model (SEA-Guard) work on these datasets?**
 **Strong on its home languages, but a fixed taxonomy limits precision, and it still has a
@@ -122,31 +124,80 @@ data for the headline SEA column; it is retained only as a controlled illustrati
 - **Lever 3 — Base model.** We compare origins (China / US / Switzerland) on language coverage
   and on **imported bias** — whether the model's origin skews a moderation *decision*.
 
-### Metric
+### How to read these numbers (metric method)
 
-F1 for the harm (positive = the harm), under one generic plain-language policy per harm, unless
-noted. For positive-only sets (Philippine spam) we report **recall only** and claim no precision.
-"Hard-negative false positives" = legitimate content wrongly flagged (the quiet, costly error).
+A reviewer asked what our F1 actually measures. Fair — **F1 alone is misleading here**, so every
+table reports more than F1. Read them this way:
+
+- **Operating point, not a curve.** These are verdict-emitting classifiers (they output
+  VIOLATION/OK, no probability we can threshold). Every number is accuracy at the model's **one
+  default operating point** under the given policy — not the best point on a swept curve.
+- **F1 can hide indiscriminate over-flagging.** F1 weights precision and recall equally, so a
+  model that flags *almost everything* posts high recall and a deceptively decent F1 while being
+  nearly useless. That is exactly what the base models do here. So we also report:
+  - **FPR** — false-positive rate on legitimate content. In T&S this is the costly error
+    (removing real users' messages); it is the number ops teams should demand.
+  - **MCC** (Matthews correlation, −1…+1) — balanced across classes, **≈ 0 for a model with no
+    real discrimination.** It exposes over-flaggers that F1 flatters: below, a base model posts
+    F1 ≈ 0.64–0.70 with **MCC ≈ 0** (no better than chance) because its "score" is all recall.
+- **Bootstrap 95% CIs.** Test sets are n = 150–300 (enlarged from the first pass), and each
+  F1/MCC carries a 2,000-resample bootstrap 95% CI. Two numbers "differ" only if their CIs don't
+  overlap — we no longer eyeball it.
+- **Per-language, balanced, positive-labelled.** Balanced sets are ~50% positive; we score each
+  language separately (a pooled F1 would blend a clean Thai result with a mostly-English
+  Philippine one). Positive-only sets (Philippine SMS spam) are scored **recall only**.
+- **Fine-tuning is per-language.** The "+ per-lang LoRA" rows are **three separate adapters**,
+  each trained only on its own language — **Thai 370, Chinese 300, Bengali 270** balanced
+  examples. There is no single multilingual adapter; each language's number used its own.
+- **Latency** is median wall-clock time-to-answer per item at each serving path (local MLX vs.
+  H100 vLLM) — a first-order cost signal, not a tuned benchmark.
+
+All figures reproduce from `apac-customization/metrics.py` over saved per-row predictions.
 
 ---
 
-## 3. Detection F1 by language
+## 3. Detection by language — F1 (95% CI), MCC, and latency
 
-| Model | SEA scam (Thai) | PH spam (Taglish/EN, recall) | Chinese fraud | Bengali offensive | Steerable? | Reasoning |
-|---|---|---|---|---|---|---|
-| **Shieldstral-1.0-3B** | 0.85 | 58/60 | 0.946 | **0.387** | No (0–1% release) | No |
-| **cope-b-a4b** | **0.975** | 52/60 | 0.852 | 0.752 | **Yes (100%)** | No |
-| **gpt-oss-safeguard-20b** | **0.975** | 51/60 | 0.769 | 0.653 | **Yes (100%)** | Yes (CoT, in-language) |
-| **Qwen3-1.7B** (base) | 0.845 | 58/60 | 0.769 | 0.643 | — | — |
-| **Qwen3-1.7B + LoRA** | **0.974** | 55/60 | 0.880 | **0.308** | — | — |
-| **SEA-Guard-8B** (regional) | 0.87 | 53/60 | 0.844 | 0.538 | No (fixed taxonomy) | No |
+Balanced sets, n = 300 each (Thai, Chinese, Bengali); Philippine spam n = 150, positive-only.
 
-On real Thai scam the two policy-following models scored **F1 0.975 with just 1/40 legitimate
-messages wrongly flagged** — matching the fine-tuned small model (0.974) **without any
-fine-tuning**, because they apply the policy instead of over-triggering on Thai text. The
-un-customized generic model sits at 0.845 with **34/40 legitimate messages wrongly flagged**
-(§5). Two routes to the same place: fine-tune a small generic model, or run a policy-following
-one.
+**F1 with bootstrap 95% CI:**
+
+| Model | Thai scam | Chinese fraud | Bengali offensive | PH spam (recall) | median latency |
+|---|---|---|---|---|---|
+| **Qwen3-1.7B** (base) | 0.70 [0.65–0.74] | 0.82 [0.78–0.87] | 0.64 [0.59–0.69] | 0.98 | **150 ms** |
+| **Qwen3-1.7B + per-lang LoRA** | **1.00 [1.0–1.0]** | **0.92 [0.89–0.95]** | 0.31 [0.22–0.39] | 0.95 | 155 ms |
+| **Shieldstral-1.0-3B** | 0.81 [0.77–0.86] | 0.87 [0.82–0.91] | 0.39 [0.30–0.47] | 0.96 | 350 ms |
+| **cope-b-a4b** | **0.94 [0.90–0.96]** | **0.95 [0.93–0.98]** | 0.64 [0.57–0.71] | 0.89 | 580 ms |
+| **gpt-oss-safeguard-20b** | 0.91 [0.87–0.94] | 0.89 [0.85–0.93] | 0.61 [0.54–0.68] | 0.87 | 1610 ms |
+| **SEA-Guard-8B** (regional) | 0.86 [0.82–0.90] | 0.88 [0.85–0.92] | 0.49 [0.40–0.56] | 0.92 | 550 ms |
+
+**MCC (discrimination — ≈ 0 means the model isn't really telling harm from benign) and FPR
+(legitimate content wrongly flagged), Thai / Chinese / Bengali:**
+
+| Model | Thai MCC · FPR | Chinese MCC · FPR | Bengali MCC · FPR |
+|---|---|---|---|
+| **Qwen3-1.7B** (base) | **0.26 · 0.87** | 0.63 · 0.29 | **−0.04 · 0.93** |
+| **Qwen3-1.7B + per-lang LoRA** | **1.00 · 0.00** | 0.85 · 0.05 | 0.10 · 0.13 |
+| **Shieldstral-1.0-3B** | 0.60 · 0.38 | 0.76 · 0.05 | 0.20 · 0.11 |
+| **cope-b-a4b** | 0.89 · 0.01 | **0.91 · 0.05** | **0.50 · 0.05** |
+| **gpt-oss-safeguard-20b** | 0.81 · 0.10 | 0.81 · 0.04 | 0.42 · 0.10 |
+| **SEA-Guard-8B** | 0.72 · 0.32 | 0.76 · 0.22 | 0.17 · 0.24 |
+
+Read the two tables together and the picture changes from the F1-only view:
+
+- **The base model's Thai "0.70 F1" is a mirage** — MCC 0.26, FPR **0.87**: it flags 87% of
+  legitimate Thai messages. High recall, almost no discrimination. On Bengali it is literally
+  **worse than random** (MCC −0.04, FPR 0.93).
+- **The strongest models are the policy-followers**, not any single small model: cope-b leads MCC
+  on every language (Thai 0.89, Chinese 0.91, Bengali 0.50) — with no fine-tuning — followed by
+  safeguard. They also have the **lowest FPR** (0.01–0.10), i.e. they rarely nuke legitimate
+  content.
+- **The two routes to a strong Thai classifier** — a per-language LoRA fine-tune of a small model
+  (MCC 1.00) *or* a policy-follower (cope-b MCC 0.89) — both beat the un-customized base (0.26),
+  and both keep FPR near zero. The fine-tuned small model is also **~4–10× faster** (150 ms vs
+  580–1610 ms) and runs on a laptop.
+- **Latency tiers cleanly**: local small model 150 ms → Shieldstral 350 ms → SEA-Guard/cope-b
+  ~550–580 ms → the reasoning model (safeguard) 1610 ms, ~10× the small model.
 
 The single most important column is not F1 — it is **what each model does to legitimate
 messages**, below.
@@ -158,15 +209,16 @@ messages**, below.
 "Multilingual" is not one property. The **same model** ranges from near-perfect to near-useless
 depending on the language, and the drop tracks how well-resourced / standardized the script is:
 
-- **Shieldstral** — sold as a multilingual model — scores **0.95 on Chinese, 0.85 on Thai, and
-  0.39 on romanized Bengali** (recall 0.27). Code-mixed romanized Bangla is simply out of its
-  distribution.
-- **Qwen3-1.7B** on gendered abuse: **English 20/20, Chinese 18/20, but Hindi 9/20, Tamil
-  7/20** — it catches two-thirds *fewer* cases in Hindi/Tamil than in English.
+- **Shieldstral** — sold as a multilingual model — scores **F1 0.87 on Chinese, 0.81 on Thai,
+  and 0.39 on romanized Bengali** (MCC 0.20, recall 0.27). Code-mixed romanized Bangla is simply
+  out of its distribution.
+- **Qwen3-1.7B** on gendered abuse: **English MCC 0.58, Chinese 0.48, but Hindi −0.10, Tamil
+  0.00** — on Hindi and Tamil it has *no* real discrimination (catches ~40% of cases, flags
+  ~45% of benign), while it works on English and Chinese.
 
 **Implication.** Benchmark averages hide this completely. A model that reports "multilingual,
-F1 0.9" can be at 0.39 in the one language your users actually write in. **You must evaluate
-your exact languages** before deployment — a per-language eval is not optional.
+F1 0.9" can be at F1 0.39 / MCC 0.20 in the one language your users actually write in. **You must
+evaluate your exact languages** before deployment — a per-language eval is not optional.
 
 ---
 
@@ -192,6 +244,10 @@ on two models: a small generic model (Qwen3-1.7B) and a policy-following model (
 | Thai (tu_scam) | 0.975 | 0.974 | 0.949 |
 | Chinese (ChiFraud) | 0.927 | 0.911 | 0.937 |
 | English | 1.00 | 1.00 | 1.00 |
+
+*(This policy-language sweep was run on the first-pass Thai/Chinese sets; the values are close
+to the enlarged-set F1 in §3 and the direction — cope-b is policy-language-robust — is
+unchanged.)*
 
 **The answer is model-dependent — and the difference is the whole point:**
 
@@ -224,47 +280,57 @@ policy-following model (or to fine-tune) rather than to switch your policy to En
 
 The failure that matters most for T&S is not missed harm — it is **a generic model removing
 legitimate messages from real users**. This is where customization pays off most clearly, and
-the strongest evidence is real Thai:
+the strongest evidence is real Thai (n = 300 balanced, FPR = fraction of *legitimate* messages
+flagged):
 
-| Qwen3-1.7B on real Thai scam | F1 | Precision | **Legit Thai messages wrongly flagged** |
+| Qwen3-1.7B on real Thai scam | F1 [95% CI] | MCC | **FPR (legit messages flagged)** |
 |---|---|---|---|
-| Base (generic scam policy) | 0.845 | 0.74 | **34 / 40 (85%)** |
-| **+ Thai LoRA** (~2 min, 370 real examples) | **0.974** | **1.00** | **0 / 40** |
+| Base (generic scam policy) | 0.70 [0.65–0.74] | **0.26** | **0.87** |
+| **+ Thai LoRA** (~2 min, 370 real examples) | **1.00 [1.0–1.0]** | **1.00** | **0.00** |
 
-Out of the box the model flagged **85% of ordinary Thai messages as scams** — it had learned
-"Thai text with any transactional word = suspicious." Two minutes of LoRA on real Thai examples
-eliminated the false positives entirely (0/40) while keeping scam recall at 40/40 and Tagalog
-spam recall at 55/60. The same pattern held on real Chinese fraud: false positives on normal
-finance text fell **40% → 5%** (F1 0.769 → 0.880).
+Out of the box the model flagged **87% of ordinary Thai messages as scams** (FPR 0.87) — its
+"0.70 F1" was almost entirely recall, with **MCC 0.26**: barely better than chance. It had
+learned "Thai text with a transactional word = suspicious." Two minutes of LoRA on 370 real Thai
+examples took it to **FPR 0.00, MCC 1.00, F1 1.00** — zero legitimate messages flagged, perfect
+discrimination on the test set. The same pattern held on real Chinese fraud: FPR **0.29 → 0.05**,
+MCC 0.63 → 0.85 (F1 0.82 → 0.92). And the two policy-following models reach the same place on
+Thai *without* fine-tuning (cope-b FPR 0.01 / MCC 0.89; safeguard FPR 0.10 / MCC 0.81).
 
 **Implication.** The headline risk of deploying an un-customized model in an APAC language is
-not that it misses scams — it is that it **silently censors legitimate local speech at scale**.
-Precision on the *hard negatives* (legitimate messages) is the number ops teams should demand,
-and light fine-tuning on a few hundred real in-language examples is a genuine, laptop-cheap fix.
+not that it misses scams — it is that it **silently censors legitimate local speech at scale**
+(here, 87% of real Thai messages). **FPR and MCC on legitimate content are the numbers ops teams
+should demand — not F1**, which hid this completely. The fix is cheap: a few hundred real
+in-language examples (laptop LoRA) or a policy-following model.
 
 ---
 
 ## 6. Finding C — fine-tuning is not magic
 
-Same recipe, four targets — it ranged from a clean win to actively harmful:
+Same recipe (a **separate per-language adapter**, balanced examples), three real targets — it
+ranged from a clean win to no help at all. Reading MCC (real discrimination) alongside F1 is
+what makes the Bengali result legible:
 
-| Fine-tune target (real data) | Base F1 | Tuned F1 | Effect |
+| Per-language LoRA (real data) | Base F1 · MCC | Tuned F1 · MCC | Effect |
 |---|---|---|---|
-| **Thai scam** (tu_scam) | 0.845 | **0.974** | legit-message FPs 85% → **0%** — best result |
-| **Chinese fraud** (ChiFraud) | 0.769 | **0.880** | normal-text FPs 40% → 5% |
-| Moneylending, SEA (synthetic) | 0.857 | 1.000 | saturated (synthetic — mechanism only) |
-| **Bengali offensive** (TB-OLID) | 0.643 | **0.308** ⚠ | recall collapsed 0.90 → 0.20 — **made it worse** |
+| **Thai scam** (370 ex) | 0.70 · 0.26 | **1.00 · 1.00** | FPR 0.87 → **0.00** — decisive win |
+| **Chinese fraud** (300 ex) | 0.82 · 0.63 | **0.92 · 0.85** | FPR 0.29 → 0.05 — clear win |
+| **Bengali offensive** (270 ex) | 0.64 · **−0.04** | 0.31 · **0.10** | neither works (see below) |
 
-Fine-tuning fixed the **objective, well-resourced** harms (scam, fraud) decisively. On the
-**subjective harm in the hardest language** (romanized Bengali offensive) the *same* recipe
-taught the small model to under-flag — 270 examples were not enough signal for a genuinely
-contested, low-resource task, and it regressed.
+Fine-tuning fixed the **objective, well-resourced** harms (Thai scam, Chinese fraud) decisively —
+CIs don't overlap, MCC jumps, FPR collapses. On the **subjective harm in the hardest language**
+(romanized Bengali offensive), MCC tells the real story that F1 obscured: the base is
+**worse-than-random (MCC −0.04)** — it flags almost everything (FPR 0.93) — and the fine-tune
+merely flipped it to flag almost *nothing* (recall 0.21), landing at MCC 0.10. **Neither base nor
+fine-tune achieves real discrimination**; 270 examples of a contested, low-resource, code-mixed
+task were not enough signal, and the adapter traded over-flagging for under-flagging without
+learning the boundary. (The earlier "F1 0.64 → 0.31, fine-tuning made it worse" framing was
+itself misled by F1 — both models were near-useless all along.)
 
-**Implication.** Fine-tuning is a real lever, not a guarantee. It rewards clear harms with
-enough good in-language labels; for subjective, culturally-loaded harms in low-resource
-languages the honest answer is often **collect better regional data** (with multiple annotators
-— see ADHAR's 0.92 inter-annotator agreement as a bar), not "add a bigger adapter." Always
-measure per-language before/after; never ship a fine-tune on faith.
+**Implication.** Fine-tuning is a real lever, not a guarantee. It rewards clear harms with enough
+good in-language labels; for subjective, culturally-loaded harms in low-resource languages the
+honest answer is often **collect better regional data** (multiple annotators — ADHAR's 0.92
+inter-annotator agreement is the bar), not "add a bigger adapter." Always measure **MCC and FPR**
+per language before/after; F1 will not warn you when a model has no real discrimination.
 
 ---
 
@@ -273,9 +339,10 @@ measure per-language before/after; never ship a fine-tune on faith.
 Whether a model *follows a policy you edit* is separate from whether it *reads your language*:
 
 - **cope-b** is **both** 100% steerable (rewrite the policy to permit the harm, it releases all
-  flagged items) **and** the best multilingual all-rounder (Chinese 0.85, Bengali 0.75).
+  flagged items) **and** the best multilingual all-rounder (MCC: Thai 0.89, Chinese 0.91,
+  Bengali 0.50 — highest on every language).
 - **Shieldstral** is **neither** steerable (0–1% release — a fixed-prior topic detector) **nor**
-  uniform across languages (0.95 Chinese vs 0.39 Bengali). But its fixed prior doubles as a
+  uniform across languages (F1 0.87 Chinese vs 0.39 Bengali). But its fixed prior doubles as a
   backstop against a bad/adversarial policy.
 - **gpt-oss-safeguard** is steerable **and** emits in-language reasoning (auditable verdicts),
   at the highest compute cost and the lowest Chinese recall.
@@ -298,25 +365,28 @@ someone already built for the region" option — it is free and open-weight, lik
 else here. It is a **fixed-taxonomy safety classifier** — it outputs safe/unsafe against its own
 built-in notion of harm, not a policy you write. We ran it on the found datasets:
 
-| Dataset | Recall | Precision | F1 | Legit content flagged |
+Enlarged sets, n = 300 each (Philippine spam n = 150, positive-only):
+
+| Dataset | Recall | F1 [95% CI] | MCC | FPR (legit flagged) |
 |---|---|---|---|---|
-| **Thai scam** (tu_scam) | 1.00 | 0.77 | 0.87 | 9/30 (30%) |
-| **Philippine spam** (SPAM_SMS, Taglish/EN) | 0.88 | — | 0.94 | (positive-only) |
-| **Chinese fraud** (ChiFraud) | 0.96 | 0.75 | 0.844 | 9/32 (28%) |
-| **Bengali offensive** (TB-OLID) | 0.47 | 0.64 | **0.538** | 8/30 |
+| **Thai scam** (tu_scam) | 1.00 | 0.86 [0.82–0.90] | 0.72 | **0.32** |
+| **Philippine spam** (SPAM_SMS, Taglish/EN) | 0.92 | 0.96 | — | (positive-only) |
+| **Chinese fraud** (ChiFraud) | 0.97 | 0.88 [0.85–0.92] | 0.76 | **0.22** |
+| **Bengali offensive** (TB-OLID) | 0.40 | 0.49 [0.40–0.56] | 0.17 | 0.24 |
 
 - **Strong on its home languages** (Thai, Philippine spam, Chinese — high recall, no setup, no
   policy to write) — a real advantage for a team that wants regional coverage out of the box.
   (The Philippine set is largely English/Taglish, so its recall partly reflects English.)
-- **But it over-flags ~30% of legitimate content**: as a fixed-taxonomy guard it cannot be
-  tuned to "scam only", so it catches adjacent-but-benign messages. A policy-following model
-  (cope-b/safeguard, 1/40 FPs) or a fine-tuned one (0/40) is far more precise here.
-- **The low-resource cliff catches even the regional specialist**: Bengali — not one of its
-  eight target languages — drops to **0.54**. "Built for the region" is not "built for every
-  language in the region."
-- **It does not beat customization on accuracy**: on Thai and Philippine spam it trails both the fine-tuned
-  Qwen (0.974) and the policy-followers (0.975). Its value is zero-effort regional coverage as
-  an always-on pre-filter or backstop, not top precision.
+- **But it over-flags ~22–32% of legitimate content** (Thai FPR 0.32, Chinese 0.22): as a
+  fixed-taxonomy guard it cannot be tuned to "scam only", so it catches adjacent-but-benign
+  messages. The policy-followers (cope-b/safeguard, FPR 0.01–0.10) and the fine-tuned Qwen
+  (FPR 0.00) are far more precise.
+- **The low-resource cliff catches even the regional specialist**: Bengali — not one of its eight
+  target languages — drops to **F1 0.49, MCC 0.17**. "Built for the region" is not "built for
+  every language in the region."
+- **It does not beat customization on accuracy**: on Thai its MCC (0.72) trails the fine-tuned
+  Qwen (1.00) and cope-b (0.89). Its value is zero-effort regional coverage as an always-on,
+  high-recall pre-filter or backstop, not top precision — and it is mid-tier on latency (~550 ms).
 
 **Implication.** A purpose-built regional model is a strong **default / backstop layer** — high
 recall in its languages with no policy engineering — but its fixed taxonomy makes it
@@ -373,8 +443,9 @@ and an over-cautious model of *any* origin structurally disadvantages dissenting
 
 A production-readiness checklist, each item earned by a finding above:
 
-1. **Test your exact languages.** Expect a low-resource cliff (Bengali 0.39–0.75 vs ~1.0
-   elsewhere). Benchmark averages hide it. *(Finding A)*
+1. **Test your exact languages, and look at MCC/FPR, not just F1.** Expect a low-resource cliff
+   (Bengali F1 0.31–0.64 / MCC ≤0.20 vs Thai/Chinese MCC 0.7–1.0). F1 alone hides indiscriminate
+   over-flagging — several base models post "decent" F1 with MCC ≈ 0. *(Findings A, B; §3)*
 2. **Measure precision on legitimate content, not just recall on harm.** The scaled harm of an
    un-customized model is over-removing real users' messages (85% of legit Thai flagged).
    *(Finding B)*
@@ -421,8 +492,15 @@ a global model lacks. The empty corner — steerable *and* uniformly multilingua
 
 ## 10. Limitations
 
-- **Small samples, mostly single-labeler.** Test sets are 60–160 items; treat cross-model
-  differences under ~0.1 F1 as ties. The synthetic SEA set demonstrates mechanism, not accuracy.
+- **Small-to-moderate samples, mostly single-labeler.** Balanced test sets are n = 300 (Thai,
+  Chinese, Bengali) and n = 150 (Philippine spam), enlarged from a 60–160-item first pass; every
+  F1/MCC carries a bootstrap 95% CI, so use the CIs (not a fixed "±0.1") to judge whether two
+  numbers differ. The synthetic SEA moneylending set demonstrates mechanism, not accuracy.
+- **A fixed operating point.** Verdict-emitting models expose no threshold to sweep, so every
+  score is the model+policy default operating point, not a tuned optimum.
+- **A corrected earlier run.** The first pass evaluated Shieldstral on train+test pooled (a bug),
+  inflating its Chinese F1 to 0.95; the numbers here are test-only (Chinese 0.87). Served-model
+  and synthetic-set first-pass numbers elsewhere in the git history predate the enlargement.
 - **Selection bias.** Positives were surfaced by keyword/label sampling, so reported recall is
   an upper bound on findable harm, not harm in general.
 - **The imported-bias probe is tiny (24 items) and verdict-only** — it cannot see reasoning-level
