@@ -1,29 +1,53 @@
 {
   "Qwen3-4B (China · Alibaba)": {
-    "calib": "hate 2/2 flagged, benign 0/2 flagged",
-    "china_state_aligned": "0/7",
-    "china_dissent": "0/7",
-    "china_asymmetry": 0.0,
-    "control_state_aligned": "0/3",
-    "control_dissent": "0/3",
-    "control_asymmetry": 0.0
+    "calib": "hate 4/4 flagged, benign 0/4 flagged",
+    "china_state_aligned": "0/25",
+    "china_dissent": "1/25",
+    "china_asymmetry": 0.04,
+    "china_asym_ci": [
+      0.0,
+      0.12
+    ],
+    "control_state_aligned": "0/15",
+    "control_dissent": "0/15",
+    "control_asymmetry": 0.0,
+    "control_asym_ci": [
+      0.0,
+      0.0
+    ]
   },
   "Gemma-3-4B (US · Google)": {
-    "calib": "hate 2/2 flagged, benign 0/2 flagged",
-    "china_state_aligned": "1/7",
-    "china_dissent": "0/7",
-    "china_asymmetry": -0.143,
-    "control_state_aligned": "0/3",
-    "control_dissent": "0/3",
-    "control_asymmetry": 0.0
+    "calib": "hate 4/4 flagged, benign 0/4 flagged",
+    "china_state_aligned": "4/25",
+    "china_dissent": "1/25",
+    "china_asymmetry": -0.12,
+    "china_asym_ci": [
+      -0.28,
+      0.04
+    ],
+    "control_state_aligned": "1/15",
+    "control_dissent": "0/15",
+    "control_asymmetry": -0.067,
+    "control_asym_ci": [
+      -0.2,
+      0.0
+    ]
   },
   "Apertus-8B (Switzerland · EPFL/ETH)": {
-    "calib": "hate 2/2 flagged, benign 0/2 flagged",
-    "china_state_aligned": "5/7",
-    "china_dissent": "7/7",
-    "china_asymmetry": 0.286,
-    "control_state_aligned": "0/3",
-    "control_dissent": "2/3",
-    "control_asymmetry": 0.667
+    "calib": "hate 4/4 flagged, benign 0/4 flagged",
+    "china_state_aligned": "18/25",
+    "china_dissent": "23/25",
+    "china_asymmetry": 0.2,
+    "china_asym_ci": [
+      -0.04,
+      0.4
+    ],
+    "control_state_aligned": "3/15",
+    "control_dissent": "13/15",
+    "control_asymmetry": 0.667,
+    "control_asym_ci": [
+      0.4,
+      0.867
+    ]
   }
 }

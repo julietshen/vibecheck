@@ -71,6 +71,43 @@ def rate(rows, preds, **filt):
     return flagged, len(idx)
 
 
+# deterministic LCG (no time/random seeding, per env constraints)
+_ST = 0x9E3779B97F4A7C15
+
+
+def _rand():
+    global _ST
+    _ST = (_ST * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+    return _ST / (1 << 64)
+
+
+def asym_ci(rows, preds, group, B=2000):
+    """Paired bootstrap CI on flag_rate(dissent) - flag_rate(state_aligned), resampling
+    over topic-PAIRS (the unit of analysis) so the CI reflects topic-level variance."""
+    topics = sorted({r["topic"] for r in rows if r.get("group") == group})
+    # per-topic (sa_flag, d_flag) as 0/1
+    pt = {}
+    for t in topics:
+        sa = [preds[i] for i, r in enumerate(rows)
+              if r["topic"] == t and r["framing"] == "state_aligned"]
+        d = [preds[i] for i, r in enumerate(rows)
+             if r["topic"] == t and r["framing"] == "dissent"]
+        if sa and d:
+            pt[t] = (1 if sa[0] == 1 else 0, 1 if d[0] == 1 else 0)
+    keys = list(pt)
+    if not keys:
+        return (0.0, 0.0)
+    vals = []
+    n = len(keys)
+    for _ in range(B):
+        samp = [pt[keys[int(_rand() * n)]] for _ in range(n)]
+        sa_rate = sum(x[0] for x in samp) / n
+        d_rate = sum(x[1] for x in samp) / n
+        vals.append(d_rate - sa_rate)
+    vals.sort()
+    return (round(vals[int(0.025 * B)], 3), round(vals[int(0.975 * B)], 3))
+
+
 def main():
     rows = load_probe()
     results = {}
@@ -84,12 +121,14 @@ def main():
         xd_f, xd_n = rate(rows, preds, group="control", framing="dissent")
         china_asym = (cd_f / cd_n) - (csa_f / csa_n) if csa_n and cd_n else 0
         ctrl_asym = (xd_f / xd_n) - (xsa_f / xsa_n) if xsa_n and xd_n else 0
+        china_ci = asym_ci(rows, preds, "china")
+        ctrl_ci = asym_ci(rows, preds, "control")
         results[name] = dict(
             calib=f"hate {hate_f}/{hate_n} flagged, benign {ben_f}/{ben_n} flagged",
             china_state_aligned=f"{csa_f}/{csa_n}", china_dissent=f"{cd_f}/{cd_n}",
-            china_asymmetry=round(china_asym, 3),
+            china_asymmetry=round(china_asym, 3), china_asym_ci=china_ci,
             control_state_aligned=f"{xsa_f}/{xsa_n}", control_dissent=f"{xd_f}/{xd_n}",
-            control_asymmetry=round(ctrl_asym, 3),
+            control_asymmetry=round(ctrl_asym, 3), control_asym_ci=ctrl_ci,
         )
         # keep the per-row flags for the writeup
         results[name]["_flags"] = {rows[i]["topic"] + "/" + rows[i]["framing"]: preds[i]
@@ -103,10 +142,13 @@ def main():
         r = results[name]
         print(f"## {name}")
         print(f"   calibration: {r['calib']}")
+        cci, xci = r["china_asym_ci"], r["control_asym_ci"]
         print(f"   CHINA topics : state-aligned flagged {r['china_state_aligned']}, "
-              f"dissent flagged {r['china_dissent']}  -> asymmetry {r['china_asymmetry']:+.2f}")
-        print(f"   CONTROL(US/IN/RU): state-aligned {r['control_state_aligned']}, "
-              f"dissent {r['control_dissent']}  -> asymmetry {r['control_asymmetry']:+.2f}")
+              f"dissent flagged {r['china_dissent']}  -> asymmetry {r['china_asymmetry']:+.2f} "
+              f"[95% CI {cci[0]:+.2f}, {cci[1]:+.2f}]")
+        print(f"   CONTROL topics: state-aligned {r['control_state_aligned']}, "
+              f"dissent {r['control_dissent']}  -> asymmetry {r['control_asymmetry']:+.2f} "
+              f"[95% CI {xci[0]:+.2f}, {xci[1]:+.2f}]")
         # which specific dissent topics got flagged
         flagged = [k.split("/")[0] for k, v in r["_flags"].items()
                    if v == 1 and k.endswith("dissent")]
