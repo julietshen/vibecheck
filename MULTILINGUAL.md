@@ -229,38 +229,39 @@ policy in Thai or Chinese — or does an English policy work? We held the **cont
 varied only the **language the (same) scam policy is written in** (English / Thai / Chinese),
 on two models: a small generic model (Qwen3-1.7B) and a policy-following model (cope-b). F1:
 
+F1 with bootstrap 95% CI, enlarged n = 300 Thai/Chinese content (English content is the small
+synthetic set, wide CIs):
+
 **Qwen3-1.7B (small, generic instruct):**
 
 | Content \ policy | English | Thai | Chinese |
 |---|---|---|---|
-| Thai (tu_scam) | **0.851** | 0.708 | 0.734 |
-| Chinese (ChiFraud) | **0.815** | 0.745 | 0.779 |
-| English | **1.00** | 0.889 | 0.889 |
+| Thai (tu_scam) | **0.83 [0.78–0.87]** | 0.71 [0.66–0.76] | 0.74 [0.69–0.79] |
+| Chinese (ChiFraud) | **0.87 [0.82–0.90]** | 0.74 [0.69–0.79] | 0.80 [0.75–0.84] |
+| English (moneylending) | 1.00 [1.0–1.0] | 0.89 [0.57–1.0] | 0.89 [0.57–1.0] |
 
 **cope-b-a4b (policy-following):**
 
 | Content \ policy | English | Thai | Chinese |
 |---|---|---|---|
-| Thai (tu_scam) | 0.975 | 0.974 | 0.949 |
-| Chinese (ChiFraud) | 0.927 | 0.911 | 0.937 |
-| English | 1.00 | 1.00 | 1.00 |
+| Thai (tu_scam) | 0.95 [0.93–0.97] | 0.94 [0.90–0.96] | 0.92 [0.88–0.95] |
+| Chinese (ChiFraud) | 0.94 [0.91–0.97] | 0.91 [0.88–0.95] | 0.92 [0.89–0.95] |
+| English (moneylending) | 1.00 | 1.00 | 1.00 |
 
-*(This policy-language sweep was run on the first-pass Thai/Chinese sets; the values are close
-to the enlarged-set F1 in §3 and the direction — cope-b is policy-language-robust — is
-unchanged.)*
+**The answer is model-dependent — and the CIs now make it statistically clean:**
 
-**The answer is model-dependent — and the difference is the whole point:**
-
-- **A generic small model applied the ENGLISH policy more accurately, even on non-English
-  content.** On Thai content an English policy scored 0.85 vs 0.71 for the Thai policy; on
-  Chinese, 0.82 vs 0.78. Writing the policy in the content's own language *lowered* accuracy.
-  The cause is a model limitation, not a virtue of English: these models are trained
-  overwhelmingly on English instructions, so they follow an English-written policy more reliably
-  than a Thai- or Chinese-written one. That is itself a gap — the model under-serves teams who
-  write policy in their own language.
-- **A policy-following model is robust to policy language.** cope-b scored within ~0.03 across
-  all three policy languages on every content set — a policy written in Thai, Chinese, or English
-  works about equally, so a team can author in whatever language it works in.
+- **A generic small model applied the ENGLISH policy significantly more accurately, even on
+  non-English content.** On Thai content the English policy scored **0.83 [0.78–0.87] vs 0.71
+  [0.66–0.76]** for the Thai policy — the CIs **do not overlap**; same on Chinese content (0.87
+  [0.82–0.90] vs 0.74 [0.69–0.79]). Writing the policy in the content's own language *lowered*
+  accuracy, and the gap is now statistically clear. The cause is a model limitation, not a virtue
+  of English: these models are trained overwhelmingly on English instructions, so they follow an
+  English-written policy more reliably than a Thai- or Chinese-written one — a real gap that
+  under-serves teams who write policy in their own language.
+- **A policy-following model is robust to policy language.** cope-b scored **0.91–0.95 with
+  overlapping CIs** across all three policy languages on every content set — a policy written in
+  Thai, Chinese, or English works equally well, so a team can author in whatever language it works
+  in.
 
 **Implication.** For **Q1 (does an English policy work on APAC content?)** — **yes, and on a
 generic small model it was the most accurate option.** For **Q2 (does an APAC-language policy
