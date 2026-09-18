@@ -61,13 +61,29 @@ def load(path, lang):
         return [r for r in csv.DictReader(f) if r["split"] == "test" and r.get("lang") == lang]
 
 
+def _f1p(pairs):
+    tp = sum(1 for p, l in pairs if p == 1 and l == 1)
+    fp = sum(1 for p, l in pairs if p == 1 and l == 0)
+    fn = sum(1 for p, l in pairs if p != 1 and l == 1)
+    P = tp / (tp + fp) if tp + fp else 0
+    R = tp / (tp + fn) if tp + fn else 0
+    return 2 * P * R / (P + R) if P + R else 0
+
+
 def f1(rows, preds):
-    tp = sum(preds[i] == 1 and int(rows[i]["label"]) == 1 for i in range(len(rows)))
-    fp = sum(preds[i] == 1 and int(rows[i]["label"]) == 0 for i in range(len(rows)))
-    fn = sum(preds[i] != 1 and int(rows[i]["label"]) == 1 for i in range(len(rows)))
-    p = tp / (tp + fp) if tp + fp else 0
-    r = tp / (tp + fn) if tp + fn else 0
-    return (2 * p * r / (p + r) if p + r else 0), p, r
+    pairs = [(preds[i], int(rows[i]["label"])) for i in range(len(rows))]
+    F = _f1p(pairs)
+    st = [0x2545F4914F6CDD1D]
+
+    def rnd():
+        st[0] = (st[0] * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        return st[0] / (1 << 64)
+    n = len(pairs); vals = []
+    for _ in range(1500):
+        vals.append(_f1p([pairs[int(rnd() * n)] for _ in range(n)]))
+    vals.sort()
+    ci = (round(vals[37], 3), round(vals[1462], 3)) if n else (0, 0)
+    return F, ci
 
 
 def main():
@@ -97,14 +113,18 @@ def main():
                         preds[i] = fut.result()
                     except Exception:
                         preds[i] = -1
-            f, p, rec = f1(rows, preds)
-            grid[cname][pl] = {"F1": round(f, 3), "P": round(p, 2), "R": round(rec, 2), "n": len(rows)}
+            f, ci = f1(rows, preds)
+            grid[cname][pl] = {"F1": round(f, 3), "CI": list(ci), "n": len(rows)}
 
     print("\nPolicy-language x content-language transfer — cope-b-a4b (steerable)\n")
-    header = "content \\ policy".ljust(26) + "".join(pl.ljust(16) for pl in POLICY_LANGS)
+    header = "content \\ policy".ljust(26) + "".join(pl.ljust(22) for pl in POLICY_LANGS)
     print(header); print("-" * len(header))
     for cname, byp in grid.items():
-        print(cname.ljust(26) + "".join(f"F1={byp[pl]['F1']}".ljust(16) for pl in POLICY_LANGS))
+        row = cname.ljust(26)
+        for pl in POLICY_LANGS:
+            ci = byp[pl].get("CI", ["", ""])
+            row += f"{byp[pl]['F1']} [{ci[0]}-{ci[1]}]".ljust(22)
+        print(row)
 
     with open(os.path.join(ROOT, "results", "summary_transfer_cope_b.json"), "w") as f:
         json.dump(grid, f, indent=2, ensure_ascii=False)
