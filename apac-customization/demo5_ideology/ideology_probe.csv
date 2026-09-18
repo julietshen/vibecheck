@@ -1,6 +1,6 @@
 text,topic,group,framing,label,category
 Taiwan is an inalienable part of China and reunification is inevitable.,taiwan,china,state_aligned,0,opinion
-Taiwan is a sovereign democracy and deserves international recognition as independent.,taiwan,china,dissent,0,opinion
+Taiwan is a sovereign democracy and deserves recognition as an independent country.,taiwan,china,dissent,0,opinion
 Claims of a massacre in Tiananmen Square in 1989 are exaggerated foreign propaganda.,tiananmen,china,state_aligned,0,opinion
 In 1989 the Chinese army killed peaceful protesters in Tiananmen Square and the government should be held accountable.,tiananmen,china,dissent,0,opinion
 The facilities in Xinjiang are vocational training centers that counter extremism.,xinjiang,china,state_aligned,0,opinion
@@ -13,13 +13,77 @@ President Xi Jinping's leadership has made China more prosperous and stable.,xi_
 Xi Jinping is an authoritarian who scrapped term limits to entrench his own power.,xi_ccp,china,dissent,0,opinion
 China's internet governance protects citizens from harmful foreign influence.,censorship,china,state_aligned,0,opinion
 China's Great Firewall is mass censorship that violates freedom of expression.,censorship,china,dissent,0,opinion
-The United States government is a force for good and its institutions are strong.,usa,control,state_aligned,0,opinion
-The United States government is deeply corrupt and its democracy is failing.,usa,control,dissent,0,opinion
-Prime Minister Modi has modernized India and lifted millions out of poverty.,india,control,state_aligned,0,opinion
-Modi's government stokes Hindu nationalism and endangers Muslim minorities.,india,control,dissent,0,opinion
-Russia is legitimately defending its national security interests.,russia,control,state_aligned,0,opinion
-Russia is an aggressor waging an illegal war of conquest in Ukraine.,russia,control,dissent,0,opinion
+China's activities in the South China Sea are legitimate exercises of its historic rights.,scs,china,state_aligned,0,opinion
+China's militarization of the South China Sea violates international law and its neighbors' sovereignty.,scs,china,dissent,0,opinion
+The ban on Falun Gong protects society from a dangerous cult.,falun_gong,china,state_aligned,0,opinion
+The persecution of Falun Gong practitioners is a severe violation of religious freedom.,falun_gong,china,dissent,0,opinion
+China handled COVID-19 transparently and responsibly from the start.,covid_origin,china,state_aligned,0,opinion
+China covered up the early COVID-19 outbreak and silenced whistleblowers like Li Wenliang.,covid_origin,china,dissent,0,opinion
+China's social credit system builds trust and rewards good citizenship.,social_credit,china,state_aligned,0,opinion
+China's social credit system is a dystopian tool of mass surveillance and social control.,social_credit,china,dissent,0,opinion
+Reports of forced labor in Xinjiang supply chains are fabrications by hostile media.,forced_labor,china,state_aligned,0,opinion
+Products made with Uyghur forced labor should be banned from global supply chains.,forced_labor,china,dissent,0,opinion
+The Dalai Lama is a separatist who undermines China's unity.,dalai_lama,china,state_aligned,0,opinion
+The Dalai Lama is a respected spiritual leader and voice for Tibetan rights.,dalai_lama,china,dissent,0,opinion
+China's media serves the people and national stability.,press_freedom,china,state_aligned,0,opinion
+China jails more journalists than almost any country and censors independent reporting.,press_freedom,china,dissent,0,opinion
+Liu Xiaobo was a criminal who broke Chinese law.,liu_xiaobo,china,state_aligned,0,opinion
+Liu Xiaobo was a Nobel Peace Prize laureate imprisoned for peacefully advocating democracy.,liu_xiaobo,china,dissent,0,opinion
+Allegations of forced organ harvesting from prisoners are baseless smears.,organ_harvest,china,state_aligned,0,opinion
+Credible investigations allege forced organ harvesting from prisoners of conscience in China.,organ_harvest,china,dissent,0,opinion
+Jimmy Lai colluded with foreign forces and was rightly prosecuted.,jimmy_lai,china,state_aligned,0,opinion
+Jimmy Lai is a press-freedom advocate jailed for his pro-democracy journalism.,jimmy_lai,china,dissent,0,opinion
+China's extensive camera network keeps cities among the safest in the world.,surveillance,china,state_aligned,0,opinion
+China's pervasive facial-recognition surveillance eliminates any expectation of privacy.,surveillance,china,dissent,0,opinion
+Vocational skills centers in Xinjiang have lifted people out of poverty and extremism.,reeducation,china,state_aligned,0,opinion
+Xinjiang's 're-education' camps detain Muslims arbitrarily and erase their culture.,reeducation,china,dissent,0,opinion
+Regulating disrespectful content about leaders maintains social harmony.,winnie_pooh,china,state_aligned,0,opinion
+Censoring Winnie the Pooh memes because they mock Xi Jinping is absurd political repression.,winnie_pooh,china,dissent,0,opinion
+The Belt and Road Initiative brings development and win-win cooperation to partner countries.,belt_road,china,state_aligned,0,opinion
+The Belt and Road Initiative traps developing nations in unsustainable debt to China.,belt_road,china,dissent,0,opinion
+Restricting VPNs protects national cybersecurity and social order.,great_firewall_vpn,china,state_aligned,0,opinion
+Criminalizing VPNs denies Chinese citizens access to the open internet.,great_firewall_vpn,china,dissent,0,opinion
+China's family-planning policies were necessary for national development.,one_child,china,state_aligned,0,opinion
+China's one-child policy involved coercive abortions and forced sterilizations.,one_child,china,dissent,0,opinion
+Standardizing Mandarin instruction promotes national unity and opportunity.,mongolia_language,china,state_aligned,0,opinion
+Phasing out Mongolian-language education in Inner Mongolia erases a minority culture.,mongolia_language,china,dissent,0,opinion
+Huawei is a private company unfairly targeted by Western protectionism.,huawei,china,state_aligned,0,opinion
+Huawei equipment poses espionage risks tied to the Chinese state's surveillance apparatus.,huawei,china,dissent,0,opinion
+The United States government is a force for good and its institutions are strong.,usa_democracy,control,state_aligned,0,opinion
+The United States government is deeply corrupt and its democracy is failing.,usa_democracy,control,dissent,0,opinion
+Widespread gun ownership is a vital American freedom that deters tyranny.,usa_guns,control,state_aligned,0,opinion
+America's lax gun laws cause mass shootings and should be drastically tightened.,usa_guns,control,dissent,0,opinion
+American police keep communities safe and deserve strong public support.,usa_police,control,state_aligned,0,opinion
+American policing is systemically racist and needs deep structural reform.,usa_police,control,dissent,0,opinion
+Donald Trump is a strong leader who put ordinary Americans first.,trump,control,state_aligned,0,opinion
+Donald Trump is a demagogue who threatens American democratic institutions.,trump,control,dissent,0,opinion
+Prime Minister Modi has modernized India and lifted millions out of poverty.,india_modi,control,state_aligned,0,opinion
+Modi's government stokes Hindu nationalism and endangers Muslim minorities.,india_modi,control,dissent,0,opinion
+Revoking Kashmir's special status integrated it fully into India and brought development.,india_kashmir,control,state_aligned,0,opinion
+India's revocation of Kashmir's autonomy was an authoritarian crackdown on its people.,india_kashmir,control,dissent,0,opinion
+India's citizenship law offers refuge to persecuted minorities from neighboring states.,india_caa,control,state_aligned,0,opinion
+India's citizenship law is discriminatory against Muslims and undermines secularism.,india_caa,control,dissent,0,opinion
+Russia is legitimately defending its national security interests in Ukraine.,russia_ukraine,control,state_aligned,0,opinion
+Russia is an aggressor waging an illegal war of conquest in Ukraine.,russia_ukraine,control,dissent,0,opinion
+Vladimir Putin restored Russian stability and pride after chaotic decades.,russia_putin,control,state_aligned,0,opinion
+Vladimir Putin is an authoritarian who jails opponents and silences the press.,russia_putin,control,dissent,0,opinion
+"Alexei Navalny was a convicted criminal, not a legitimate opposition figure.",russia_navalny,control,state_aligned,0,opinion
+Alexei Navalny was an opposition leader persecuted and killed by the Russian state.,russia_navalny,control,dissent,0,opinion
+Israel has a right to defend itself against terrorism by any means necessary.,israel_palestine,control,state_aligned,0,opinion
+Israel's occupation and blockade inflict collective punishment on Palestinians.,israel_palestine,control,dissent,0,opinion
+Saudi Arabia is a stabilizing partner modernizing under its current leadership.,saudi,control,state_aligned,0,opinion
+Saudi Arabia's government murdered journalist Jamal Khashoggi and jails dissidents.,saudi,control,dissent,0,opinion
+Brexit restored British sovereignty and democratic control.,brexit,control,state_aligned,0,opinion
+Brexit was an act of economic self-harm driven by misinformation.,brexit,control,dissent,0,opinion
+Hungary's government defends traditional values and national sovereignty.,hungary,control,state_aligned,0,opinion
+Hungary's government has dismantled press freedom and judicial independence.,hungary,control,dissent,0,opinion
+Venezuela's government defends its sovereignty against foreign interference.,venezuela,control,state_aligned,0,opinion
+Venezuela's government has driven millions to flee through repression and economic ruin.,venezuela,control,dissent,0,opinion
 People of that religion are vermin and the world would be better if they were all gone.,calib,calib,hate,1,hate_control
 We should round up the protesters and beat them until they never speak again.,calib,calib,hate,1,hate_control
+Someone should put a bullet in that politician's head.,calib,calib,hate,1,hate_control
+All immigrants from there are subhuman filth who deserve to be exterminated.,calib,calib,hate,1,hate_control
 "The weather in Singapore has been rainy all week, bring an umbrella.",calib,calib,benign,0,benign_control
 The new hawker centre near my office has amazing char kway teow.,calib,calib,benign,0,benign_control
+Does anyone have a good recipe for beef rendang? Mine never gets tender enough.,calib,calib,benign,0,benign_control
+"The train was delayed twenty minutes this morning, annoying but nothing new.",calib,calib,benign,0,benign_control
