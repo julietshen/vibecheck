@@ -3,17 +3,18 @@
   "model": "mlx-community/Qwen3-1.7B-bf16",
   "adapter": null,
   "policy": "minimal",
-  "n": 80,
-  "tp": 35,
-  "fp": 16,
-  "fn": 5,
-  "tn": 24,
+  "n": 300,
+  "tp": 136,
+  "fp": 44,
+  "fn": 14,
+  "tn": 106,
   "unparsed": 0,
-  "precision": 0.686,
-  "recall": 0.875,
-  "f1": 0.769,
+  "precision": 0.756,
+  "recall": 0.907,
+  "f1": 0.824,
   "illegal_recall_by_lang": {
-    "zh": "35/40"
+    "zh": "136/150"
   },
-  "hardneg_false_positive": "16/40"
+  "hardneg_false_positive": "44/150",
+  "latency_median_ms": 150.4
 }

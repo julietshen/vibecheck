@@ -57,12 +57,18 @@ def main():
     model, tok = load(args.model, **kw)
     sampler = make_sampler(temp=0.0)  # greedy, deterministic
 
+    import time
     rows = load_test(args.test)
     preds = []
+    latencies = []
     for r in rows:
+        t0 = time.perf_counter()
         out = generate(model, tok, prompt=chat_prompt(tok, r["text"], policy),
                        max_tokens=args.max_tokens, sampler=sampler, verbose=False)
+        latencies.append((time.perf_counter() - t0) * 1000)  # ms
         preds.append({**r, "raw": out.strip(), "pred": parse_verdict(out)})
+    latencies.sort()
+    median_ms = latencies[len(latencies) // 2] if latencies else 0
 
     # overall confusion (positive class = VIOLATION = 1)
     tp = sum(1 for r in preds if r["pred"] == 1 and int(r["label"]) == 1)
@@ -93,6 +99,7 @@ def main():
         "precision": round(p, 3), "recall": round(r_, 3), "f1": round(f, 3),
         "illegal_recall_by_lang": {k: f"{v[0]}/{v[1]}" for k, v in per_lang.items()},
         "hardneg_false_positive": f"{lic_fp}/{len(negs)}",
+        "latency_median_ms": round(median_ms, 1),
     }
 
     outdir = os.path.join(HERE, "results")

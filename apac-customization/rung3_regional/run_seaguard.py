@@ -62,7 +62,22 @@ def main():
         rows = load(path, lang, args.limit)
         if not rows:
             continue
-        preds = [classify(r["text"]) for r in rows]
+        import time
+        preds, lat = [], []
+        for r in rows:
+            t0 = time.perf_counter()
+            preds.append(classify(r["text"]))
+            lat.append((time.perf_counter() - t0) * 1000)
+        lat.sort()
+        median_ms = round(lat[len(lat) // 2], 1) if lat else 0
+        # per-row predictions for metrics.py (one file per dataset)
+        slug = name.lower().replace(" ", "_")
+        with open(os.path.join(ROOT, "results", f"predictions_seaguard_{slug}.csv"),
+                  "w", newline="", encoding="utf-8") as pf:
+            import csv as _csv
+            w = _csv.writer(pf); w.writerow(["lang", "category", "label", "pred"])
+            for i, r in enumerate(rows):
+                w.writerow([r.get("lang", ""), r.get("category", ""), r["label"], preds[i]])
         labels = [int(r["label"]) for r in rows]
         pos = [i for i in range(len(rows)) if labels[i] == 1]
         neg = [i for i in range(len(rows)) if labels[i] == 0]
@@ -77,6 +92,7 @@ def main():
             "F1": round(f1, 3) if f1 is not None else None,
             "neg_FP": f"{fp}/{len(neg)}" if neg else "n/a (positive-only)",
             "unparsed": sum(v == -1 for v in preds),
+            "latency_median_ms": median_ms,
         }
         print(f"{name:20} recall={results[name]['recall']} P={results[name]['precision']} "
               f"F1={results[name]['F1']} neg_FP={results[name]['neg_FP']} unparsed={results[name]['unparsed']}")

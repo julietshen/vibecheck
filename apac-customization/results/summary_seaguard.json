@@ -1,34 +1,38 @@
 {
   "Thai scam": {
-    "n": 60,
+    "n": 300,
     "recall": 1.0,
-    "precision": 0.769,
-    "F1": 0.87,
-    "neg_FP": "9/30",
-    "unparsed": 0
+    "precision": 0.758,
+    "F1": 0.862,
+    "neg_FP": "48/150",
+    "unparsed": 0,
+    "latency_median_ms": 499.4
   },
   "Tagalog spam": {
-    "n": 60,
-    "recall": 0.883,
+    "n": 150,
+    "recall": 0.92,
     "precision": 1.0,
-    "F1": 0.938,
+    "F1": 0.958,
     "neg_FP": "n/a (positive-only)",
-    "unparsed": 0
+    "unparsed": 0,
+    "latency_median_ms": 553.0
   },
   "Chinese fraud": {
-    "n": 60,
-    "recall": 0.964,
-    "precision": 0.75,
-    "F1": 0.844,
-    "neg_FP": "9/32",
-    "unparsed": 0
+    "n": 300,
+    "recall": 0.967,
+    "precision": 0.815,
+    "F1": 0.884,
+    "neg_FP": "33/150",
+    "unparsed": 0,
+    "latency_median_ms": 612.2
   },
   "Bengali offensive": {
-    "n": 60,
-    "recall": 0.467,
-    "precision": 0.636,
-    "F1": 0.538,
-    "neg_FP": "8/30",
-    "unparsed": 0
+    "n": 300,
+    "recall": 0.4,
+    "precision": 0.625,
+    "F1": 0.488,
+    "neg_FP": "36/150",
+    "unparsed": 0,
+    "latency_median_ms": 477.8
   }
 }

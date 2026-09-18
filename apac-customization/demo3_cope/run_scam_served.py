@@ -90,14 +90,31 @@ def main():
         if not warmup(ep, model, mt):
             print(f"  {name} did not warm up; skipping"); continue
         preds = [None] * len(rows)
+        lat = [None] * len(rows)
+
+        def timed_call(i):
+            t0 = time.perf_counter()
+            v = call(ep, model, mt, rows[i]["text"])
+            return i, v, (time.perf_counter() - t0) * 1000
+
         with cf.ThreadPoolExecutor(max_workers=12) as ex:
-            futs = {ex.submit(call, ep, model, mt, r["text"]): i for i, r in enumerate(rows)}
+            futs = [ex.submit(timed_call, i) for i in range(len(rows))]
             for fut in cf.as_completed(futs):
-                i = futs[fut]
                 try:
-                    preds[i] = fut.result()
+                    i, v, ms = fut.result()
+                    preds[i] = v; lat[i] = ms
                 except Exception:
-                    preds[i] = -1
+                    pass
+        preds = [p if p is not None else -1 for p in preds]
+        lats = sorted(x for x in lat if x is not None)
+        median_ms = round(lats[len(lats) // 2], 1) if lats else 0
+        # per-row predictions for metrics.py
+        slug = name.replace("-", "_")
+        with open(os.path.join(ROOT, "results", f"predictions_served_{slug}_scam.csv"),
+                  "w", newline="", encoding="utf-8") as pf:
+            w = csv.writer(pf); w.writerow(["lang", "category", "label", "pred"])
+            for i, r in enumerate(rows):
+                w.writerow([r["lang"], r.get("category", ""), r["label"], preds[i]])
         labels = [int(r["label"]) for r in rows]
         # Thai has both classes; Tagalog is positive-only (recall)
         th = [i for i, r in enumerate(rows) if r["lang"] == "th"]
@@ -114,7 +131,8 @@ def main():
         unparsed = sum(v == -1 for v in preds)
         res = {"thai_F1": round(f1, 3), "thai_P": round(p, 3), "thai_R": round(rec, 3),
                "thai_normal_FP": f"{th_fp}/{len(th_norm)}",
-               "tagalog_recall": f"{tl_recall}/{len(tl)}", "unparsed": unparsed}
+               "tagalog_recall": f"{tl_recall}/{len(tl)}", "unparsed": unparsed,
+               "latency_median_ms": median_ms}
         out[name] = res
         print(f"  Thai F1={f1:.3f} P={p:.2f} R={rec:.2f} | normal_FP={th_fp}/{len(th_norm)} "
               f"| Tagalog recall={tl_recall}/{len(tl)} | unparsed={unparsed}")

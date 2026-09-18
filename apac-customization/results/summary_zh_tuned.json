@@ -3,17 +3,18 @@
   "model": "mlx-community/Qwen3-1.7B-bf16",
   "adapter": "rung2_lora/adapters_chifraud",
   "policy": "minimal",
-  "n": 80,
-  "tp": 33,
-  "fp": 2,
-  "fn": 7,
-  "tn": 38,
+  "n": 300,
+  "tp": 134,
+  "fp": 7,
+  "fn": 16,
+  "tn": 143,
   "unparsed": 0,
-  "precision": 0.943,
-  "recall": 0.825,
-  "f1": 0.88,
+  "precision": 0.95,
+  "recall": 0.893,
+  "f1": 0.921,
   "illegal_recall_by_lang": {
-    "zh": "33/40"
+    "zh": "134/150"
   },
-  "hardneg_false_positive": "2/40"
+  "hardneg_false_positive": "7/150",
+  "latency_median_ms": 161.2
 }

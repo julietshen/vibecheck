@@ -111,13 +111,27 @@ def main():
         zn = max(logits[j].item() for j in no_ids)
         return math.exp(zy) / (math.exp(zy) + math.exp(zn))
 
-    rows = load_rows(args.test, limit=args.limit)
+    import time
+    rows = load_rows(args.test, split_only="test", limit=args.limit)
     langs = sorted(set(r["lang"] for r in rows))
     preds = {k: [] for k in POLICIES}
+    latencies = []
     for r in rows:
         for k, pol in POLICIES.items():
+            t0 = time.perf_counter()
             s = score(pol, r["text"])
+            latencies.append((time.perf_counter() - t0) * 1000)
             preds[k].append(1 if s >= args.threshold else 0)
+    latencies.sort()
+    median_ms = round(latencies[len(latencies) // 2], 1) if latencies else 0
+
+    # write per-row predictions for the baseline policy (for metrics.py + CIs)
+    base_k = next(iter(POLICIES))
+    with open(os.path.join(ROOT, "results", f"predictions_shieldstral_{args.domain}.csv"),
+              "w", newline="", encoding="utf-8") as pf:
+        w = csv.writer(pf); w.writerow(["lang", "category", "label", "pred"])
+        for i, r in enumerate(rows):
+            w.writerow([r["lang"], r["category"], r["label"], preds[base_k][i]])
 
     labels = [int(r["label"]) for r in rows]
     illegal_idx = [i for i, r in enumerate(rows) if int(r["label"]) == 1]
@@ -158,7 +172,7 @@ def main():
 
     out = {"model": MODEL_ID, "domain": args.domain, "n": len(rows), "langs": langs,
            "baseline": {"P": round(p, 3), "R": round(r_, 3), "F1": round(f, 3)},
-           "release_rate_permit_all": rel_rate}
+           "release_rate_permit_all": rel_rate, "latency_median_ms": median_ms}
     os.makedirs(os.path.join(ROOT, "results"), exist_ok=True)
     tag = args.domain if args.domain != "moneylending" else "moneylending"
     with open(os.path.join(ROOT, "results", f"summary_demo1_shieldstral_{tag}.json"), "w") as f2:

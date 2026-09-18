@@ -64,8 +64,8 @@ def main():
     ap.add_argument("--source", required=True, help="path to a ChiFraud clone")
     ap.add_argument("--train-pos", type=int, default=150)
     ap.add_argument("--train-neg", type=int, default=150)
-    ap.add_argument("--test-pos", type=int, default=40)
-    ap.add_argument("--test-neg", type=int, default=40)
+    ap.add_argument("--test-pos", type=int, default=150)
+    ap.add_argument("--test-neg", type=int, default=150)
     args = ap.parse_args()
 
     train = sample_split(args.source, "ChiFraud_train.csv", args.train_pos, args.train_neg)

@@ -35,8 +35,8 @@ def main():
     ap.add_argument("--thai", required=True)
     ap.add_argument("--tagalog", required=True)
     ap.add_argument("--thai-train", type=int, default=200)   # per class
-    ap.add_argument("--thai-test", type=int, default=40)     # per class
-    ap.add_argument("--tagalog-test", type=int, default=60)  # spam only (recall)
+    ap.add_argument("--thai-test", type=int, default=150)    # per class (enlarged for tighter CIs)
+    ap.add_argument("--tagalog-test", type=int, default=150)  # spam only (recall)
     args = ap.parse_args()
 
     import pandas as pd

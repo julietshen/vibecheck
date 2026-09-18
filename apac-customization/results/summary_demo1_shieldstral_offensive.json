@@ -1,14 +1,15 @@
 {
   "model": "mistralai/Shieldstral-1.0-3B",
   "domain": "offensive",
-  "n": 360,
+  "n": 300,
   "langs": [
     "bn"
   ],
   "baseline": {
-    "P": 0.671,
-    "R": 0.272,
-    "F1": 0.387
+    "P": 0.702,
+    "R": 0.267,
+    "F1": 0.386
   },
-  "release_rate_permit_all": null
+  "release_rate_permit_all": null,
+  "latency_median_ms": 359.8
 }

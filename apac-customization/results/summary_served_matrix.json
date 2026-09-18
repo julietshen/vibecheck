@@ -1,0 +1,32 @@
+{
+  "cope-b_sea_scam": {
+    "n": 450,
+    "median_ms": 533.4,
+    "unparsed": 0
+  },
+  "cope-b_chifraud": {
+    "n": 300,
+    "median_ms": 509.6,
+    "unparsed": 0
+  },
+  "cope-b_bengali": {
+    "n": 300,
+    "median_ms": 710.5,
+    "unparsed": 0
+  },
+  "safeguard_sea_scam": {
+    "n": 450,
+    "median_ms": 1305.1,
+    "unparsed": 1
+  },
+  "safeguard_chifraud": {
+    "n": 300,
+    "median_ms": 1628.8,
+    "unparsed": 0
+  },
+  "safeguard_bengali": {
+    "n": 300,
+    "median_ms": 1912.2,
+    "unparsed": 14
+  }
+}

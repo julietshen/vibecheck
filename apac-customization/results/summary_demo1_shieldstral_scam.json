@@ -1,15 +1,16 @@
 {
   "model": "mistralai/Shieldstral-1.0-3B",
   "domain": "scam",
-  "n": 540,
+  "n": 450,
   "langs": [
     "th",
     "tl"
   ],
   "baseline": {
-    "P": 0.761,
+    "P": 0.834,
     "R": 0.953,
-    "F1": 0.846
+    "F1": 0.89
   },
-  "release_rate_permit_all": null
+  "release_rate_permit_all": null,
+  "latency_median_ms": 314.6
 }

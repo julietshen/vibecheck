@@ -45,7 +45,7 @@ def main():
     args = ap.parse_args()
 
     train = load(os.path.join(args.source, "train.json"), 150, 150)
-    test = load(os.path.join(args.source, "test.json"), 30, 30)
+    test = load(os.path.join(args.source, "test.json"), 150, 150)  # enlarged for tighter CIs
     valid = train[:30]; train = train[30:]
 
     outdir = os.path.join(HERE, "bengali")
